@@ -1,9 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context=".EditorActivity">
+    <TextView
+        android:id="@+id/task_title_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"
+        android:text="@string/add_new_todo" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/title_title_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title" />
+
+        <EditText
+            android:id="@+id/title_input_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:autofillHints="task_title"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/description_title_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description" />
+
+        <EditText
+            android:id="@+id/description_input_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:autofillHints="task_description"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/date_title_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date" />
+
+        <EditText
+            android:id="@+id/date_input_edt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="date"
+            android:autofillHints="task_date"
+            />
+
+        <Button
+            android:id="@+id/pick_date_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/picker"
+            app:icon="@android:drawable/ic_menu_my_calendar" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/time_title_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time" />
+
+        <EditText
+            android:id="@+id/time_input_edt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="time"
+            android:autofillHints="task_date"
+            />
+
+        <Button
+            android:id="@+id/pick_time_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/picker"
+            app:icon="@android:drawable/ic_menu_recent_history" />
+
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/add_task_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/add" />
+
+</LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add">add</string>
+    <string name="add_new_todo">Add new Todo</string>
+    <string name="update_Todo">Update Todo (id=</string>
+    <string name="update">UPDATE</string>
+</resources>

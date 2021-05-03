@@ -1,14 +1,166 @@
 package com.danielr_shlomoc.ex3;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
-public class EditorActivity extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+public class EditorActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
+
+    private Button addBtn, dateBtn, timeBtn;
+    private EditText timeEdt, dateEdt, descEdt, titleEdt;
+    private TextView title;
+    private SharedPreferences sp;
+    private int dateLen, timeLen, taskID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+        dateLen = 10;
+        timeLen = 5;
+        connectWidgets();
+        sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        taskID = sp.getInt("taskID", -1);
+        if (taskID > -1) {
+            Task task = new Task(taskID);
+            loadTask(task);
+        }
     }
+
+    private void connectWidgets() {
+        //connects all widgets and sets them listeners
+        addBtn = findViewById(R.id.add_task_btn);
+        dateBtn = findViewById(R.id.pick_date_btn);
+        timeBtn = findViewById(R.id.pick_time_btn);
+        timeEdt = findViewById(R.id.time_input_edt);
+        dateEdt = findViewById(R.id.date_input_edt);
+        descEdt = findViewById(R.id.description_input_edt);
+        titleEdt = findViewById(R.id.title_input_edt);
+        title = findViewById(R.id.task_title_txt);
+
+        addBtn.setOnClickListener(this);
+        dateBtn.setOnClickListener(this);
+        timeBtn.setOnClickListener(this);
+
+//        timeEdt.addTextChangedListener(createTextWatcher(timeLen));
+//        dateEdt.addTextChangedListener(createTextWatcher(dateLen));
+    }
+
+    private Task createTask() {
+        String date = dateEdt.getText().toString();
+        String time = timeEdt.getText().toString();
+        String title = titleEdt.getText().toString();
+        String description = descEdt.getText().toString();
+        return new Task(title, description, date, time, taskID);
+    }
+
+    private void loadTask(Task t) {
+        //load an existing task to the screen
+        titleEdt.setText(t.getTitle());
+        descEdt.setText(t.getDescription());
+        dateEdt.setText(t.getDate());
+        timeEdt.setText(t.getTime());
+        String s = String.format("%s%d)", getString(R.string.update_Todo), taskID);
+        title.setText(s);
+        addBtn.setText(R.string.update);
+    }
+
+    private TextWatcher createTextWatcher(int letters) {
+        //creates a textWatcher that hides the keyboard when Editable gets to letters
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().length() == letters)
+                    HideKeyboardFormUser();
+            }
+        };
+    }
+
+    private void HideKeyboardFormUser() {
+        View view = getCurrentFocus();
+        InputMethodManager hideKeyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        hideKeyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void saveTask(Task t) {
+        Log.i("tester", t.toString());
+        Intent intent = new Intent(this, ToDoListActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+            case R.id.add_task_btn:
+                try {
+                    Task t = createTask();
+                    saveTask(t);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+                break;
+            case R.id.pick_date_btn:
+                com.danielr_shlomoc.ex3.DatePicker mDatePickerDialogFragment;
+                mDatePickerDialogFragment = new com.danielr_shlomoc.ex3.DatePicker();
+                mDatePickerDialogFragment.show(getSupportFragmentManager(), "DATE PICK");
+                break;
+            case R.id.pick_time_btn:
+                DialogFragment timePicker = new TimePickerFragment();
+                timePicker.show(getSupportFragmentManager(), "time picker");
+
+                break;
+
+        }
+
+    }
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        timeEdt.setText("" + hourOfDay + ":" + minute);
+    }
+
+    @Override
+    public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int dayOfMonth) {
+        Calendar mCalender = Calendar.getInstance();
+        mCalender.set(Calendar.YEAR, year);
+        mCalender.set(Calendar.MONTH, month);
+        mCalender.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        Date calenderDate = mCalender.getTime();
+        dateEdt.setText(dateFormat.format(calenderDate));
+    }
+
 }
