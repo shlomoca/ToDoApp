@@ -1,12 +1,17 @@
 package com.danielr_shlomoc.ex3;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,14 +27,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button loginBtn;
     private EditText userName, userPassword;
     private SharedPreferences sp;
+    private MenuItem about;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setTitle("Todo Login");
-        Log.d("mylog", "onCreate()\n");
 
         try {
             // Opens a current database or creates it
@@ -50,7 +55,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginBtn.setOnClickListener(this);
         userName = findViewById(R.id.userNameID);
         userPassword = findViewById(R.id.userPasswordID);
-
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 
 
@@ -68,6 +72,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         }
     }
+
+    @Override
+    // add 3 dots menu
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        about = menu.add("About");
+        about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener()
+        {
+            @Override
+            public boolean onMenuItemClick( MenuItem item)
+            {
+                dialog();
+                return true;
+            }
+        });
+        return true;
+    }
+
+    // This function creates an about dialog
+    private void dialog()
+    {
+        String title, message, positive;
+        AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
+            title = "About App";
+            message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 05/04/21.";
+            positive = "OK";
+            myDialog.setIcon(R.mipmap.todo_icon_round);
+        myDialog.setPositiveButton(positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(positive.equals("YES"))
+                    finish();
+            }
+        });
+        myDialog.setTitle(title);
+        myDialog.setMessage(message);
+        myDialog.setCancelable(false);
+        myDialog.show();
+    }
+
 
     private void authentication() {
 

@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,7 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class EditorActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
+public class EditorActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private Button addBtn, dateBtn, timeBtn;
     private EditText timeEdt, dateEdt, descEdt, titleEdt;
@@ -38,6 +39,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getSupportActionBar().setTitle("Todo Editor");
         dateLen = 10;
         timeLen = 5;
         connectWidgets();
@@ -46,6 +49,96 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         if (taskID > -1) {
             Task task = new Task(taskID);
             loadTask(task);
+        }
+
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("tester","on stop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.i("tester","onDestroy");
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove("taskID");
+        editor.apply();
+        Log.i("tester","removing");
+        SharedPreferences.Editor pauseEditor = getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit();
+        pauseEditor.clear();
+        pauseEditor.remove("saved_editor");
+        pauseEditor.remove("taskID");
+        pauseEditor.remove("date");
+        pauseEditor.remove("time");
+        pauseEditor.remove("title");
+        pauseEditor.remove("description");
+        pauseEditor.remove("pageTitle");
+        pauseEditor.remove("addButton");
+        pauseEditor.apply();
+        Log.i("tester","on destroy0");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadScreen();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveScreen();
+
+    }
+
+    private void saveScreen() {
+        //puts all of the screen in the shared preferences
+        Log.i("tester","saving");
+        SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = preferences.edit();
+        String date = dateEdt.getText().toString();
+        String time = timeEdt.getText().toString();
+        String titleEdit = titleEdt.getText().toString();
+        String description = descEdt.getText().toString();
+        String pageTitle = title.getText().toString();
+        String addButton = addBtn.getText().toString();
+        e.putBoolean("saved_editor", true);
+        e.putInt("taskID", taskID);
+        e.putString("date", date);
+        e.putString("time", time);
+        e.putString("title", titleEdit);
+        e.putString("description", description);
+        e.putString("pageTitle", pageTitle);
+        e.putString("addButton", addButton);
+        e.apply();
+    }
+
+    private void loadScreen() {
+        //loads all screen elements to their place the shared preferences
+        Log.i("tester","loading");
+        SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor e = preferences.edit();
+//        if (false) {
+        if (preferences.getBoolean("saved_editor", false)) {
+            String date = preferences.getString("date", "");
+            String time = preferences.getString("time", "");
+            String titleEdit = preferences.getString("title", "");
+            String description = preferences.getString("description", "");
+            String pageTitle = preferences.getString("pageTitle", "");
+            String addButton = preferences.getString("addButton", "");
+            taskID = preferences.getInt("taskID", -1);
+            title.setText(pageTitle);
+            addBtn.setText(addButton);
+            timeEdt.setText(time);
+            dateEdt.setText(date);
+            titleEdt.setText(titleEdit);
+            descEdt.setText(description);
         }
     }
 
@@ -64,8 +157,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         dateBtn.setOnClickListener(this);
         timeBtn.setOnClickListener(this);
 
-//        timeEdt.addTextChangedListener(createTextWatcher(timeLen));
-//        dateEdt.addTextChangedListener(createTextWatcher(dateLen));
+        timeEdt.addTextChangedListener(createTextWatcher(timeLen));
+        dateEdt.addTextChangedListener(createTextWatcher(dateLen));
     }
 
     private Task createTask() {
@@ -109,7 +202,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private void HideKeyboardFormUser() {
         View view = getCurrentFocus();
         InputMethodManager hideKeyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        hideKeyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (view != null)
+            hideKeyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void saveTask(Task t) {
@@ -141,12 +235,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.pick_time_btn:
                 DialogFragment timePicker = new TimePickerFragment();
                 timePicker.show(getSupportFragmentManager(), "time picker");
-
                 break;
 
         }
 
     }
+
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         timeEdt.setText("" + hourOfDay + ":" + minute);
