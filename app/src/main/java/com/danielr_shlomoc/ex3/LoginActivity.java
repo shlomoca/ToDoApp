@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setTitle("Todo Login");
 
+
         try {
             // Opens a current database or creates it
             // Pass the database name, designate that only this app can use it

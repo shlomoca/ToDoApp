@@ -10,14 +10,16 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/titleTxvID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="title"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="date"/>
+<!--        <TextView-->
+<!--            android:id="@+id/dateTxvID"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="date"/>-->
 
     </LinearLayout>
 
@@ -26,14 +28,16 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
         <TextView
+            android:id="@+id/descriptionTxvID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="title"/>
+            android:hint="@string/description"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="date"/>
+<!--        <TextView-->
+<!--            android:id="@+id/timeTxvID"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="@string/time"/>-->
 
     </LinearLayout>
 </LinearLayout>
