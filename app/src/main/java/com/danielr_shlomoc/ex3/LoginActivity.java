@@ -31,6 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setTitle("Todo Login");
         Log.d("mylog", "onCreate()\n");
 
+
         try {
             // Opens a current database or creates it
             // Pass the database name, designate that only this app can use it

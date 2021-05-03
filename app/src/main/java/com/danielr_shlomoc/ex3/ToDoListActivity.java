@@ -3,16 +3,20 @@ package com.danielr_shlomoc.ex3;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class ToDoListActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -22,6 +26,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     private String username;
     private FloatingActionButton addTaskbtn;
     private boolean loggedOut = false;
+    private ArrayList<AndroidTaskItem> androidTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,30 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
         }
         addTaskbtn = findViewById(R.id.addTaskBtnID);
         addTaskbtn.setOnClickListener(this);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+//        // Create an ArrayList of AndroidFlavor objects
+//        androidTask = new ArrayList<AndroidTaskItem>();
+//        androidTask.add(new AndroidTaskItem("Android 1.6 (Donut)", "API level 6"));
+//        androidTask.add(new AndroidTaskItem("Android 2.0 (Eclair)", "API level 7"));
+//        androidTask.add(new AndroidTaskItem("Android 2.2 (Froyo)", "API level 8"));
+//        androidTask.add(new AndroidTaskItem("Android 2.3 (GingerBread)", "API level 10"));
+//        androidTask.add(new AndroidTaskItem("Android 3.0 (Honeycomb)", "API level 11"));
+//        androidTask.add(new AndroidTaskItem("Android 4.0 (Ice Cream Sandwich)", "API level 15"));
+//        androidTask.add(new AndroidTaskItem("Android 4.1 (Jelly Bean)", "API level 17"));
+//        androidTask.add(new AndroidTaskItem("Android 4.4 (KitKat)", "API level 19"));
+//        androidTask.add(new AndroidTaskItem("Android 5.0 (Lollipop)", "API level 22"));
+//        androidTask.add(new AndroidTaskItem("Android 6.0 (Marshmallow)", "API level 23"));
+//
+//        // Create an AndroidFlavorAdapter, whose data source is a list of AndroidFlavors.
+//        // The adapter knows how to create list item views for each item in the list.
+//        AndroidTaskAdapter flavorAdapter = new AndroidTaskAdapter(this, androidTask);
+//
+//        // Get a reference to the ListView, and attach the adapter to the listView.
+//        ListView listView = findViewById(R.id.ListView1ID);
+//        listView.setAdapter(flavorAdapter);
+
 
     }
 

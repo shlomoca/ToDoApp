@@ -8,8 +8,10 @@ public class DataBase {
 
     public static final String MY_DB_NAME = "TodosDB.db";
     private SQLiteDatabase todosDB = null;
+    private String username;
 
-    public DataBase(Context context) {
+    public DataBase(Context context, String username) {
+        this.username = username;
 
         try {
             todosDB = context.openOrCreateDatabase(MY_DB_NAME, context.MODE_PRIVATE, null);
@@ -18,7 +20,13 @@ public class DataBase {
         }
     }
 
+//    public ArrayList<AndroidTaskItem> getTasks(String username){
+//
+//    }
 
+    public void addTask() {
+
+    }
 
 
 }
