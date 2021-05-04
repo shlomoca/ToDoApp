@@ -40,10 +40,11 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getSupportActionBar().setTitle("Todo Editor");
+        setTitle("Todo Editor");
         dateLen = 10;
         timeLen = 5;
         connectWidgets();
+        getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit().clear().apply();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         taskID = sp.getInt("taskID", -1);
         if (taskID > -1) {
@@ -51,37 +52,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             loadTask(task);
         }
 
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i("tester","on stop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        Log.i("tester","onDestroy");
-        SharedPreferences.Editor editor = sp.edit();
-        editor.remove("taskID");
-        editor.apply();
-        Log.i("tester","removing");
-        SharedPreferences.Editor pauseEditor = getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit();
-        pauseEditor.clear();
-        pauseEditor.remove("saved_editor");
-        pauseEditor.remove("taskID");
-        pauseEditor.remove("date");
-        pauseEditor.remove("time");
-        pauseEditor.remove("title");
-        pauseEditor.remove("description");
-        pauseEditor.remove("pageTitle");
-        pauseEditor.remove("addButton");
-        pauseEditor.apply();
-        Log.i("tester","on destroy0");
-
+        sp.edit().remove("taskID").apply();
     }
 
     @Override
@@ -99,7 +75,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     private void saveScreen() {
         //puts all of the screen in the shared preferences
-        Log.i("tester","saving");
         SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
         SharedPreferences.Editor e = preferences.edit();
         String date = dateEdt.getText().toString();
@@ -120,19 +95,16 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void loadScreen() {
-        //loads all screen elements to their place the shared preferences
-        Log.i("tester","loading");
-        SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor e = preferences.edit();
-//        if (false) {
-        if (preferences.getBoolean("saved_editor", false)) {
-            String date = preferences.getString("date", "");
-            String time = preferences.getString("time", "");
-            String titleEdit = preferences.getString("title", "");
-            String description = preferences.getString("description", "");
-            String pageTitle = preferences.getString("pageTitle", "");
-            String addButton = preferences.getString("addButton", "");
-            taskID = preferences.getInt("taskID", -1);
+        //loads all screen elements to their place the shared p
+        SharedPreferences p = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
+        if (p.getBoolean("saved_editor", false)) {
+            String date = p.getString("date", "");
+            String time = p.getString("time", "");
+            String titleEdit = p.getString("title", "");
+            String description = p.getString("description", "");
+            String pageTitle = p.getString("pageTitle", "");
+            String addButton = p.getString("addButton", "");
+            taskID = p.getInt("taskID", -1);
             title.setText(pageTitle);
             addBtn.setText(addButton);
             timeEdt.setText(time);
@@ -162,6 +134,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private Task createTask() {
+        //create a task from the fields in the activity
         String date = dateEdt.getText().toString();
         String time = timeEdt.getText().toString();
         String title = titleEdt.getText().toString();

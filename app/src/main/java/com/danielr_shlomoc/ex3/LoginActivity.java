@@ -59,9 +59,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 
 
-
     }
-
 
 
     @Override
@@ -80,11 +78,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreateOptionsMenu(menu);
 
         about = menu.add("About");
-        about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener()
-        {
+        about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick( MenuItem item)
-            {
+            public boolean onMenuItemClick(MenuItem item) {
                 dialog();
                 return true;
             }
@@ -93,19 +89,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     // This function creates an about dialog
-    private void dialog()
-    {
+    private void dialog() {
         String title, message, positive;
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
-            title = "About App";
-            message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 05/04/21.";
-            positive = "OK";
-            myDialog.setIcon(R.mipmap.todo_icon_round);
+        title = "About App";
+        message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 18/05/21.";
+        positive = "OK";
+        myDialog.setIcon(R.mipmap.todo_icon_round);
         myDialog.setPositiveButton(positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(positive.equals("YES"))
-                    finish();
             }
         });
         myDialog.setTitle(title);
