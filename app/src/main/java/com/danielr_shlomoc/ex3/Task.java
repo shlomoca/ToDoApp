@@ -1,5 +1,7 @@
 package com.danielr_shlomoc.ex3;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,15 +9,17 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Task {
-    final private SimpleDateFormat FORMATTER, DATE_F, TIME_F;
+    final private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH), DATE_F= new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH) , TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
     private int id;
     private String title, description, date, time;
 
 
+
+
     public Task(String title, String description, String date, String time, int id) throws IllegalArgumentException {
-        FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
-        DATE_F = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+//        FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
+//        DATE_F = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+//        TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         validateInput(title, description, date, time);
         this.title = title;
         this.description = description;
@@ -25,9 +29,9 @@ public class Task {
 
     }
     public Task(int id) throws IllegalArgumentException {
-        FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
-        DATE_F = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+//        FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
+//        DATE_F = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+//        TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         loadTaskFromDB();
         this.id = id;
     }
@@ -61,6 +65,8 @@ public class Task {
         return time;
     }
 
+    public int getId() { return id; }
+
 
     @Override
     public String toString() {
@@ -90,17 +96,22 @@ public class Task {
 
     }
 
-    public String convertTime(long time) {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static String convertTime(long time) {
         Date date = new Date(time);
         return TIME_F.format(date);
     }
 
-    public String convertDate(long time) {
+    public static String convertDate(long time) {
         Date date = new Date(time);
+        Log.d("date",DATE_F.format(date));
         return DATE_F.format(date);
     }
 
-    public long convertDateTime(String date, String time) {
+    public static long convertDateTime(String date, String time) {
         //convert date and time to long
         try {
             Date d = FORMATTER.parse(date + " " + time);

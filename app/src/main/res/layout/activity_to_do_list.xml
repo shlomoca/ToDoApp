@@ -4,22 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:gravity="right"
     tools:context=".ToDoListActivity">
 
-    <ListView
-        android:id="@+id/ListView1ID"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addTaskBtnID"
-        android:layout_width="wrap_content"
+    <SearchView
+        android:id="@+id/searchViewID"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:backgroundTint="#2196F3"
-        android:contentDescription="TODO"
-        android:layout_margin="16dp"/>
+        android:queryHint="Search"
+         />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+
+        <ListView
+            android:id="@+id/ListView1ID"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addTaskBtnID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:backgroundTint="#2196F3"
+            android:contentDescription="TODO"
+            app:srcCompat="@android:drawable/ic_input_add" />
+    </FrameLayout>
+
+
 </LinearLayout>

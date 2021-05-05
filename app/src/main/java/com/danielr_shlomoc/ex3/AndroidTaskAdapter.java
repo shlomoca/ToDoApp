@@ -39,20 +39,20 @@ public class AndroidTaskAdapter extends ArrayAdapter<AndroidTaskItem> {
         txvTaskTitle.setText(currentAndroidTask.getTaskTitle());
 
 
-//        TextView date = convertView.findViewById(R.id.dateTxvID);
-//        // Get the version name from the current AndroidFlavor object and
-//        // set this text on the name TextView
-//        date.setText(currentAndroidTask.getTaskTitle());
+        TextView date = convertView.findViewById(R.id.dateTxvID);
+        // Get the version name from the current AndroidFlavor object and
+        // set this text on the name TextView
+        date.setText(currentAndroidTask.getDate());
 
         TextView decription = convertView.findViewById(R.id.descriptionTxvID);
         // Get the version name from the current AndroidFlavor object and
         // set this text on the name TextView
         decription.setText(currentAndroidTask.getDescription());
 
-//        TextView time = convertView.findViewById(R.id.timeTxvID);
-//        // Get the version name from the current AndroidFlavor object and
-//        // set this text on the name TextView
-//        time.setText(currentAndroidTask.getTaskTitle());
+        TextView time = convertView.findViewById(R.id.timeTxvID);
+        // Get the version name from the current AndroidFlavor object and
+        // set this text on the name TextView
+        time.setText(currentAndroidTask.getTime());
 
 
         // Return the whole list item layout (containing 2 TextViews and an ImageView)

@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText userName, userPassword;
     private SharedPreferences sp;
     private MenuItem about;
+    private DataBase dataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,20 +38,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setTitle("Todo Login");
 
 
-        try {
-            // Opens a current database or creates it
-            // Pass the database name, designate that only this app can use it
-            // and a DatabaseErrorHandler in the case of database corruption
-            todosDB = openOrCreateDatabase(MY_DB_NAME, MODE_PRIVATE, null);
-
-            // build an SQL statement to create 'users' table (if not exists)
-            String sql = "CREATE TABLE IF NOT EXISTS users (username VARCHAR primary key, password VARCHAR);";
-            todosDB.execSQL(sql);
-            sql = "CREATE TABLE IF NOT EXISTS todos (id integer primary key , username VARCHAR , title VARCHAR, description VARCHAR, datatime LONG);";
-            todosDB.execSQL(sql);
-        } catch (Exception e) {
-            Log.d("debug", "Error Creating Database");
-        }
+//        try {
+//            // Opens a current database or creates it
+//            // Pass the database name, designate that only this app can use it
+//            // and a DatabaseErrorHandler in the case of database corruption
+//            todosDB = openOrCreateDatabase(MY_DB_NAME, MODE_PRIVATE, null);
+//
+//            // build an SQL statement to create 'users' table (if not exists)
+//            String sql = "CREATE TABLE IF NOT EXISTS users (username VARCHAR primary key, password VARCHAR);";
+//            todosDB.execSQL(sql);
+//            sql = "CREATE TABLE IF NOT EXISTS todos (id integer primary key , username VARCHAR , title VARCHAR, description VARCHAR, datetime LONG);";
+//            todosDB.execSQL(sql);
+//        } catch (Exception e) {
+//            Log.d("debug", "Error Creating Database");
+//        }
+        dataBase = new DataBase(this);
+        dataBase.createTables();
 
         loginBtn = findViewById(R.id.loginBtnID);
         loginBtn.setOnClickListener(this);
@@ -59,9 +62,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 
 
-
     }
-
 
 
     @Override
@@ -80,11 +81,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreateOptionsMenu(menu);
 
         about = menu.add("About");
-        about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener()
-        {
+        about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick( MenuItem item)
-            {
+            public boolean onMenuItemClick(MenuItem item) {
                 dialog();
                 return true;
             }
@@ -93,18 +92,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     // This function creates an about dialog
-    private void dialog()
-    {
+    private void dialog() {
         String title, message, positive;
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
-            title = "About App";
-            message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 05/04/21.";
-            positive = "OK";
-            myDialog.setIcon(R.mipmap.todo_icon_round);
+        title = "About App";
+        message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 05/04/21.";
+        positive = "OK";
+        myDialog.setIcon(R.mipmap.todo_icon_round);
         myDialog.setPositiveButton(positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(positive.equals("YES"))
+                if (positive.equals("YES"))
                     finish();
             }
         });
@@ -121,8 +119,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String userPassword = this.userPassword.getText().toString();
         boolean userExist = false;
 
-        String query = "SELECT username, password FROM users";
-        Cursor cr = todosDB.rawQuery(query, null);
+//        String query = "SELECT username, password FROM users";
+//        Cursor cr = todosDB.rawQuery(query, null);
+        String[] columns = {"username", "password"};
+        Cursor cr = dataBase.selectColumns(columns, "users");
         String password = "";
 
         int usernameColumn = cr.getColumnIndex("username");
@@ -159,7 +159,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // add new user
         if (!userExist) {
-            addUser(userName, userPassword);
+//            addUser(userName, userPassword);
+            dataBase.addUser(userName, userPassword);
             login();
         }
 
@@ -172,10 +173,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     //This function add new user to database
-    private void addUser(String userName, String userPassword) {
-        String addUser = "INSERT INTO users (username, password) VALUES ('" + userName + "', '" + userPassword + "');";
-        todosDB.execSQL(addUser);
-    }
+//    private void addUser(String userName, String userPassword) {
+//        String addUser = "INSERT INTO users (username, password) VALUES ('" + userName + "', '" + userPassword + "');";
+//        todosDB.execSQL(addUser);
+//    }
 
     @Override
     protected void onStart() {

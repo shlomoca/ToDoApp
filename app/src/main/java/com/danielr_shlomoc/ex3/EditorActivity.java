@@ -33,6 +33,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private TextView title;
     private SharedPreferences sp;
     private int dateLen, timeLen, taskID;
+    private String username;
+    private DataBase dataBase;
 
 
     @Override
@@ -45,11 +47,13 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         timeLen = 5;
         connectWidgets();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        username = sp.getString("user", null);
         taskID = sp.getInt("taskID", -1);
         if (taskID > -1) {
             Task task = new Task(taskID);
             loadTask(task);
         }
+        dataBase = new DataBase(this);
 
 
     }
@@ -57,18 +61,18 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i("tester","on stop");
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.i("tester","onDestroy");
+
         SharedPreferences.Editor editor = sp.edit();
         editor.remove("taskID");
         editor.apply();
-        Log.i("tester","removing");
+
         SharedPreferences.Editor pauseEditor = getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit();
         pauseEditor.clear();
         pauseEditor.remove("saved_editor");
@@ -80,7 +84,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         pauseEditor.remove("pageTitle");
         pauseEditor.remove("addButton");
         pauseEditor.apply();
-        Log.i("tester","on destroy0");
+
 
     }
 
@@ -99,7 +103,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     private void saveScreen() {
         //puts all of the screen in the shared preferences
-        Log.i("tester","saving");
+
         SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
         SharedPreferences.Editor e = preferences.edit();
         String date = dateEdt.getText().toString();
@@ -121,7 +125,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     private void loadScreen() {
         //loads all screen elements to their place the shared preferences
-        Log.i("tester","loading");
+
         SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
 //        SharedPreferences.Editor e = preferences.edit();
 //        if (false) {
@@ -220,6 +224,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.add_task_btn:
                 try {
                     Task t = createTask();
+                    dataBase.addTask(this.username,t);
                     saveTask(t);
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
