@@ -9,14 +9,16 @@
         android:roundIcon="@mipmap/todo_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ToDoApp">
-        <activity android:name=".EditorActivity"/>
-        <activity android:name=".ToDoListActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".EditorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ToDoListActivity" />
+        <activity android:name=".LoginActivity">
+
         </activity>
 
     </application>
