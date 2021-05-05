@@ -2,27 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="350dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:layout_marginEnd="30dp"
+    android:layout_marginStart="30dp"
     android:layout_gravity="center"
     tools:context=".LoginActivity"
     android:background="#E4E3E3"
     >
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/person_icon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_launcher_background" />
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/person" />
 
     <EditText
         android:id="@+id/userNameID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="user name"
+        android:hint="@string/user_name"
         android:inputType="textPersonName"
         android:layout_marginBottom="10dp"/>
 
@@ -31,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:layout_marginBottom="20dp"/>
 
@@ -39,8 +41,9 @@
         android:id="@+id/loginBtnID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="#3F51B5"
         android:layout_gravity="center"
-        android:text="LOG IN"
+        android:text="@string/log_in"
          />
 </LinearLayout>
