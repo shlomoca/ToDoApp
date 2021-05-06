@@ -8,12 +8,13 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -28,7 +29,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button loginBtn;
     private EditText userName, userPassword;
     private SharedPreferences sp;
-    private MenuItem about;
+    private MenuItem about, exit;
     private DataBase dataBase;
 
     @Override
@@ -38,21 +39,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setTitle("Todo Login");
 
-
-//        try {
-//            // Opens a current database or creates it
-//            // Pass the database name, designate that only this app can use it
-//            // and a DatabaseErrorHandler in the case of database corruption
-//            todosDB = openOrCreateDatabase(MY_DB_NAME, MODE_PRIVATE, null);
-//
-//            // build an SQL statement to create 'users' table (if not exists)
-//            String sql = "CREATE TABLE IF NOT EXISTS users (username VARCHAR primary key, password VARCHAR);";
-//            todosDB.execSQL(sql);
-//            sql = "CREATE TABLE IF NOT EXISTS todos (id integer primary key , username VARCHAR , title VARCHAR, description VARCHAR, datetime LONG);";
-//            todosDB.execSQL(sql);
-//        } catch (Exception e) {
-//            Log.d("debug", "Error Creating Database");
-//        }
         dataBase = new DataBase(this);
         dataBase.createTables();
 
@@ -63,9 +49,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setAcknowledgement();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         String user = sp.getString("user", null);
-        if(user!=null)
+        if (user != null)
             login(false);
-
     }
 
 
@@ -85,24 +70,46 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreateOptionsMenu(menu);
 
         about = menu.add("About");
+        exit = menu.add("Exit");
         about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                dialog();
+                dialog(false);
                 return true;
             }
         });
+        exit.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                dialog(true);
+                return true;
+            }
+        });
+
+
         return true;
     }
 
     // This function creates an about dialog
-    private void dialog() {
-        String title, message, positive;
+    private void dialog(Boolean isExit) {
+        String title, message, positive, negative;
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
-        title = "About App";
-        message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 18/05/21.";
-        positive = "OK";
-        myDialog.setIcon(R.mipmap.todo_icon_round);
+        if (!isExit) {
+            title = "About App";
+            message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 18/05/21.";
+            positive = "OK";
+            negative = null;
+            myDialog.setIcon(R.mipmap.todo_icon_round);
+        } else {
+            title = "Exit App";
+            message = "Do you really want to exit ToDoApp ?";
+            positive = "YES";
+            negative = "NO";
+            myDialog.setIcon(R.drawable.ic_exit);
+        }
+        myDialog.setTitle(title);
+        myDialog.setMessage(message);
+        myDialog.setCancelable(false);
         myDialog.setPositiveButton(positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -110,11 +117,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     finish();
             }
         });
-        myDialog.setTitle(title);
-        myDialog.setMessage(message);
-        myDialog.setCancelable(false);
+        if (isExit) {
+            myDialog.setNegativeButton(negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+        }
         myDialog.show();
     }
+
 
 
     private void authentication() {
@@ -122,9 +134,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String userName = this.userName.getText().toString();
         String userPassword = this.userPassword.getText().toString();
         boolean userExist = false;
-
-//        String query = "SELECT username, password FROM users";
-//        Cursor cr = todosDB.rawQuery(query, null);
         String[] columns = {"username", "password"};
         Cursor cr = dataBase.selectColumns(columns, "users");
         String password = "";
@@ -145,10 +154,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 // user exist check the password
                 if (userName.equals(name)) {
-                    Log.d("mylog", "user exist");
                     userExist = true;
                     password = cr.getString(passwordColumn);
-
                     if (userPassword.equals(password))
                         login(true);
                     else
@@ -173,64 +180,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //This function login and move to ToDoListActivity
     private void login(boolean saveUser) {
         Intent toDoListActivity = new Intent(this, ToDoListActivity.class);
-        if(saveUser){
-        String temp = this.userName.getText().toString();
+        if (saveUser) {
+            String temp = this.userName.getText().toString();
             sp.edit().putString("user", temp).apply();
         }
         startActivity(toDoListActivity);
         this.finish();
     }
-    private void setAcknowledgement(){
-        userPassword.setImeActionLabel("Login", KeyEvent.KEYCODE_ENTER);
-    userPassword.setOnKeyListener(new View.OnKeyListener() {
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            // If the event is a key-down event on the "enter" button
-            if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                // Perform action on key press
-                authentication();
-                return true;
+
+    private void setAcknowledgement() {
+        userPassword.setImeOptions(EditorInfo.IME_ACTION_GO);
+        userPassword.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    authentication();
+                    return true;
+                }
+                return false;
             }
-            return false;
-        }
-    });
+        });
     }
-
-    //This function add new user to database
-//    private void addUser(String userName, String userPassword) {
-//        String addUser = "INSERT INTO users (username, password) VALUES ('" + userName + "', '" + userPassword + "');";
-//        todosDB.execSQL(addUser);
-//    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("mylog", "onStart()\n");// check if already user loges in
-//        if (sp.getString("user", null) != null)
-//            login();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("mylog", "onStart()\n");
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("mylog", "onPause()\n");
-
-
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("mylog", "onResume()\n");
-
-    }
-
 }
