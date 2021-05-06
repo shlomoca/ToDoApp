@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -168,7 +169,9 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         AndroidTaskItem androidTaskItem = androidTask.get(position);
-
+        Intent intent = new Intent(this, EditorActivity.class);
+        intent.putExtra("_id",androidTaskItem.getId());
+        startActivity(intent);
         Log.d("search",Integer.toString(androidTaskItem.getId()));
     }
 
@@ -179,6 +182,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
         dataBase.removeTask(androidTaskItem.getId());
         Log.d("search",Integer.toString(androidTaskItem.getId()));
         getUserTasks();
+        Toast.makeText(this,"Todo was DELETED",Toast.LENGTH_LONG).show();
         return true;
     }
 }

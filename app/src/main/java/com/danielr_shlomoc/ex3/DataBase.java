@@ -63,6 +63,24 @@ public class DataBase {
         return todosDB.rawQuery(query, null);
     }
 
+    public Cursor getTask(int id) {
+        String columns[] = {"_id", "title", "description", "datetime"};
+
+        Cursor cr = selectColumns(columns,"todos");
+        if (cr.moveToFirst()) {
+//            int id = cr.getColumnIndex("_id");
+            int taskTitle = cr.getColumnIndex("title");
+            int description = cr.getColumnIndex("description");
+            int dateTime = cr.getColumnIndex("datetime");
+            do {
+
+            }
+            while (cr.moveToNext());
+            cr.close();
+        }
+        return cr;
+    }
+
     // This function get username and his password and added the user to database
     public void addUser(String userName, String userPassword) {
         String addUser = "INSERT INTO users (username, password) VALUES ('" + userName + "', '" + userPassword + "');";
