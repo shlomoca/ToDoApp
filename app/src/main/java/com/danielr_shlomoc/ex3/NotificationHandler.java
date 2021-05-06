@@ -44,7 +44,10 @@ public class NotificationHandler {
     //show user a notification of a task based on its ID
     public void ShowNotification(int id) {
         Task task = getTask(id);
-        if (task != null) {
+        long time= System.currentTimeMillis();
+        boolean overMinuteDifference = (task.getDateTime() - time) > 61 * 1000;
+        Log.i("mylog","is it over minute? "+ overMinuteDifference+ " current time = " + time +" task time = " + task.getDateTime());
+        if (task != null && !overMinuteDifference) {
             Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.mipmap.todo_icon_round)
                     .setContentTitle(task.getTitle())

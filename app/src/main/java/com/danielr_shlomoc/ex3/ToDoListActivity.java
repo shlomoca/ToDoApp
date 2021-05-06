@@ -1,6 +1,8 @@
 package com.danielr_shlomoc.ex3;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -18,10 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.net.CookieHandler;
 import java.util.ArrayList;
 
-public class ToDoListActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, ListView.OnItemClickListener,ListView.OnItemLongClickListener {
+public class ToDoListActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, ListView.OnItemClickListener, ListView.OnItemLongClickListener {
 
     public static final String MY_DB_NAME = "TodosDB.db";
     private DataBase dataBase;
@@ -54,9 +55,8 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
 
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         username = sp.getString("user", null);
-        if(username == null)
+        if (username == null)
             logout();
-
 
 
         setTitle("Todo List (" + username + ")");
@@ -136,7 +136,6 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -165,7 +164,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
         for (int i = 0; i < androidTask.size(); i++) {
             AndroidTaskItem t = androidTask.get(i);
             if (t.getTaskTitle().startsWith(newText) || t.getDescription().startsWith(newText))
-                temp.add(new AndroidTaskItem(t.getId(),t.getTaskTitle(), t.getDescription(), Task.convertDateTime(t.getDate(), t.getTime())));
+                temp.add(new AndroidTaskItem(t.getId(), t.getTaskTitle(), t.getDescription(), Task.convertDateTime(t.getDate(), t.getTime())));
         }
         taskAdapter = new AndroidTaskAdapter(this, temp);
         listView.setAdapter(taskAdapter);
@@ -177,19 +176,38 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
 
         AndroidTaskItem androidTaskItem = androidTask.get(position);
         Intent intent = new Intent(this, EditorActivity.class);
-        intent.putExtra("_id",androidTaskItem.getId());
+        intent.putExtra("_id", androidTaskItem.getId());
         startActivity(intent);
-        Log.d("search",Integer.toString(androidTaskItem.getId()));
+        Log.d("search", Integer.toString(androidTaskItem.getId()));
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         /*This function handle long press on task on the task list and delete it*/
+        Context context = this;
         AndroidTaskItem androidTaskItem = androidTask.get(position);
-        dataBase.removeTask(androidTaskItem.getId());
-        Log.d("search",Integer.toString(androidTaskItem.getId()));
-        getUserTasks();
-        Toast.makeText(this,"Todo was DELETED",Toast.LENGTH_LONG).show();
+        AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
+        myDialog.setTitle("Delete task");
+        myDialog.setMessage("are you sure that you want to delete this task?");
+        myDialog.setCancelable(false);
+        myDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dataBase.removeTask(androidTaskItem.getId());
+                Log.d("search", Integer.toString(androidTaskItem.getId()));
+                getUserTasks();
+                Toast.makeText(context, "Todo was DELETED", Toast.LENGTH_LONG).show();
+            }
+        });
+        myDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        myDialog.show();
+
+
         return true;
     }
 }
