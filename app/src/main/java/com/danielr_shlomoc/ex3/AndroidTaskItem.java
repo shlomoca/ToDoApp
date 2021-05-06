@@ -1,13 +1,20 @@
 package com.danielr_shlomoc.ex3;
 
 public class AndroidTaskItem {
-    private String taskTitle, description;
-    private long dateTime;
+    private String taskTitle, description,date,time;
+    private int id;
 
-    public AndroidTaskItem(String taskTitle, String description) {
-//        this.dateTime = date;
+
+    public AndroidTaskItem(int id, String taskTitle, String description, long dateTime) {
+        this.id = id;
         this.taskTitle = taskTitle;
         this.description = description;
+        this.date = Task.convertDate(dateTime);
+        this.time = Task.convertTime(dateTime);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getTaskTitle() {
@@ -18,7 +25,11 @@ public class AndroidTaskItem {
         return description;
     }
 
-    public long getDateTime() {
-        return dateTime;
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
     }
 }

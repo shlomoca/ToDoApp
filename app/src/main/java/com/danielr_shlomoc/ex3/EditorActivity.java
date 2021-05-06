@@ -34,6 +34,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private SharedPreferences sp;
     private int dateLen, timeLen, taskID;
     NotificationHandler notificationHandler;
+    private String username;
+    private DataBase dataBase;
 
 
     @Override
@@ -48,11 +50,13 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         notificationHandler = new NotificationHandler(this);
         getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit().clear().apply();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        username = sp.getString("user", null);
         taskID = sp.getInt("taskID", -1);
         if (taskID > -1) {
             Task task = new Task(taskID);
             loadTask(task);
         }
+        dataBase = new DataBase(this);
 
     }
 
@@ -148,8 +152,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         dateEdt.addTextChangedListener(createTextWatcher(dateLen));
     }
 
+    //create a task from the fields in the activity
     private Task createTask() {
-        //create a task from the fields in the activity
         String date = dateEdt.getText().toString();
         String time = timeEdt.getText().toString();
         String title = titleEdt.getText().toString();
@@ -210,6 +214,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.add_task_btn:
                 try {
                     Task t = createTask();
+                    dataBase.addTask(this.username,t);
                     saveTask(t);
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
