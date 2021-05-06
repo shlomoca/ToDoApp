@@ -61,6 +61,11 @@ public class Task {
         return time;
     }
 
+    public void addIdToTask(int taskID){
+        if (id<0)
+            id = taskID;
+    }
+
 
     @Override
     public String toString() {
@@ -69,9 +74,9 @@ public class Task {
                 time  + " description: " + description;
     }
 
+    /*checks that the title and description contain at least one character
+     and test the date/time to see if it is valid*/
     private void validateInput(String title, String description, String date, String time) {
-        /*checks that the title and description contain at least one character
-         and test the date/time to see if it is valid*/
         if (title.length() < 1)
             throw new IllegalArgumentException("Please enter title");
         if (description.length() < 1)
@@ -113,4 +118,11 @@ public class Task {
         return -1;
     }
 
+    public long getDateTime() {
+        return convertDateTime(date,time);
+    }
+
+    public int getId() {
+            return id;
+    }
 }

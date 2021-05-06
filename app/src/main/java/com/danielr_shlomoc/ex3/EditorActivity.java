@@ -33,6 +33,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private TextView title;
     private SharedPreferences sp;
     private int dateLen, timeLen, taskID;
+    NotificationHandler notificationHandler;
 
 
     @Override
@@ -44,6 +45,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         dateLen = 10;
         timeLen = 5;
         connectWidgets();
+        notificationHandler = new NotificationHandler(this);
         getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit().clear().apply();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         taskID = sp.getInt("taskID", -1);
@@ -70,6 +72,19 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     protected void onPause() {
         super.onPause();
         saveScreen();
+
+    }
+    private void resetScreen(boolean fromMemory){
+        if (fromMemory)
+            loadScreen();
+        else{
+            title.setText(R.string.add_new_todo);
+            addBtn.setText(R.string.add);
+            timeEdt.setText("");
+            dateEdt.setText("");
+            titleEdt.setText("");
+            descEdt.setText("");
+        }
 
     }
 
@@ -157,12 +172,9 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         //creates a textWatcher that hides the keyboard when Editable gets to letters
         return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -180,10 +192,15 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void saveTask(Task t) {
-        Log.i("tester", t.toString());
-        Intent intent = new Intent(this, ToDoListActivity.class);
-        startActivity(intent);
-        this.finish();
+        Log.i("mylog","saving task");
+
+        //get task id from db
+
+        notificationHandler.cancelAlarm(t.getId());
+        notificationHandler.createOneTimeAlarm(t);
+        resetScreen(false);
+        Toast.makeText(this,"Todo was UPDATED",Toast.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -216,7 +233,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        timeEdt.setText("" + hourOfDay + ":" + minute);
+        String time = String.format("%02d:%02d" , hourOfDay,minute);
+        timeEdt.setText(time);
     }
 
     @Override
