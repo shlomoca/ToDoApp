@@ -54,11 +54,19 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
 
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         username = sp.getString("user", null);
+        if(username == null)
+            logout();
+
+
 
         setTitle("Todo List (" + username + ")");
 
-        getUserTasks();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUserTasks();
     }
 
     // This function display all user tasks in ListView
@@ -100,7 +108,9 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     private void logout() {
         Intent loginActivity = new Intent(this, LoginActivity.class);
         loggedOut = true;
+        sp.edit().remove("user").apply();
         startActivity(loginActivity);
+        this.finish();
     }
 
     @Override
@@ -119,12 +129,9 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onStop() {
         super.onStop();
+//        if (loggedOut)
+//            sp.edit().remove("user").apply();
 
-        if (loggedOut) {
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString("user", null);
-            editor.commit();
-        }
 
     }
 

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.danielr_shlomoc.ex3">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/todo_icon"
@@ -9,16 +11,26 @@
         android:roundIcon="@mipmap/todo_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ToDoApp">
-        <activity android:name=".EditorActivity">
+        <service
+            android:name=".NotificationService"
+            android:enabled="true"
+            android:exported="true"/>
 
-        </activity>
-        <activity android:name=".ToDoListActivity" />
+        <receiver
+            android:name=".AlarmClockReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ToDoListActivity" />
+        <activity android:name=".EditorActivity">
+
         </activity>
 
     </application>

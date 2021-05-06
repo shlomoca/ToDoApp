@@ -34,6 +34,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private TextView title;
     private SharedPreferences sp;
     private int dateLen, timeLen, taskID;
+    NotificationHandler notificationHandler;
     private String username;
     private DataBase dataBase;
 
@@ -43,10 +44,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getSupportActionBar().setTitle("Todo Editor");
+        setTitle("Todo Editor");
         dateLen = 10;
         timeLen = 5;
         connectWidgets();
+        notificationHandler = new NotificationHandler(this);
+        getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit().clear().apply();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         username = sp.getString("user", null);
         taskID = getIntent().getIntExtra("_id",-1);
@@ -57,37 +60,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         }
         dataBase = new DataBase(this);
 
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-
-        SharedPreferences.Editor editor = sp.edit();
-        editor.remove("taskID");
-        editor.apply();
-
-        SharedPreferences.Editor pauseEditor = getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit();
-        pauseEditor.clear();
-        pauseEditor.remove("saved_editor");
-        pauseEditor.remove("taskID");
-        pauseEditor.remove("date");
-        pauseEditor.remove("time");
-        pauseEditor.remove("title");
-        pauseEditor.remove("description");
-        pauseEditor.remove("pageTitle");
-        pauseEditor.remove("addButton");
-        pauseEditor.apply();
-
-
+        sp.edit().remove("taskID").apply();
     }
 
     @Override
@@ -102,10 +80,22 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         saveScreen();
 
     }
+    private void resetScreen(boolean fromMemory){
+        if (fromMemory)
+            loadScreen();
+        else{
+            title.setText(R.string.add_new_todo);
+            addBtn.setText(R.string.add);
+            timeEdt.setText("");
+            dateEdt.setText("");
+            titleEdt.setText("");
+            descEdt.setText("");
+        }
+
+    }
 
     private void saveScreen() {
         //puts all of the screen in the shared preferences
-
         SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
         SharedPreferences.Editor e = preferences.edit();
         String date = dateEdt.getText().toString();
@@ -126,19 +116,16 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void loadScreen() {
-        //loads all screen elements to their place the shared preferences
-
-        SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor e = preferences.edit();
-//        if (false) {
-        if (preferences.getBoolean("saved_editor", false)) {
-            String date = preferences.getString("date", "");
-            String time = preferences.getString("time", "");
-            String titleEdit = preferences.getString("title", "");
-            String description = preferences.getString("description", "");
-            String pageTitle = preferences.getString("pageTitle", "");
-            String addButton = preferences.getString("addButton", "");
-            taskID = preferences.getInt("taskID", -1);
+        //loads all screen elements to their place the shared p
+        SharedPreferences p = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
+        if (p.getBoolean("saved_editor", false)) {
+            String date = p.getString("date", "");
+            String time = p.getString("time", "");
+            String titleEdit = p.getString("title", "");
+            String description = p.getString("description", "");
+            String pageTitle = p.getString("pageTitle", "");
+            String addButton = p.getString("addButton", "");
+            taskID = p.getInt("taskID", -1);
             title.setText(pageTitle);
             addBtn.setText(addButton);
             timeEdt.setText(time);
@@ -167,6 +154,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         dateEdt.addTextChangedListener(createTextWatcher(dateLen));
     }
 
+    //create a task from the fields in the activity
     private Task createTask() {
         String date = dateEdt.getText().toString();
         String time = timeEdt.getText().toString();
@@ -208,12 +196,9 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         //creates a textWatcher that hides the keyboard when Editable gets to letters
         return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -231,10 +216,15 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void saveTask(Task t) {
-        Log.i("tester", t.toString());
-        Intent intent = new Intent(this, ToDoListActivity.class);
-        startActivity(intent);
-        this.finish();
+        Log.i("mylog","saving task");
+
+        //get task id from db
+
+        notificationHandler.cancelAlarm(t.getId());
+        notificationHandler.createOneTimeAlarm(t);
+        resetScreen(false);
+        Toast.makeText(this,"Todo was UPDATED",Toast.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -268,7 +258,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        timeEdt.setText("" + hourOfDay + ":" + minute);
+        String time = String.format("%02d:%02d" , hourOfDay,minute);
+        timeEdt.setText(time);
     }
 
     @Override

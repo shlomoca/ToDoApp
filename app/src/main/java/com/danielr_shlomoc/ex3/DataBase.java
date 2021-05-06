@@ -89,7 +89,7 @@ public class DataBase {
 
     // This function get username and add his task to database
     public void addTask(String username, Task t) {
-        String addTask = "INSERT INTO todos (username  , title , description , datetime ) VALUES ('" + username + "', '" + t.getTitle() + "', '" + t.getDescription() + "', '" + t.convertDateTime(t.getDate(), t.getTime()) + "');";
+        String addTask = "INSERT INTO todos (username , title , description , datetime ) VALUES ('" + username + "', '" + t.getTitle() + "', '" + t.getDescription() + "', '" + t.convertDateTime(t.getDate(), t.getTime()) + "');";
         todosDB.execSQL(addTask);
         String[] idColumn = {"_id"};
         Cursor cr = selectColumns(idColumn, "todos");

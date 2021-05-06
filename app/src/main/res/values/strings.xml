@@ -9,4 +9,9 @@
     <string name="add_new_todo">Add new Todo</string>
     <string name="update_Todo">Update Todo (id=</string>
     <string name="update">UPDATE</string>
+    <string name="user_name">user name</string>
+    <string name="password">password</string>
+    <string name="log_in">LOG IN</string>
+    <string name="dd_mm_yyyy">dd:mm:yyyy</string>
+    <string name="hh_mm">hh:mm</string>
 </resources>

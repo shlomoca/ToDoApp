@@ -1,7 +1,6 @@
 package com.danielr_shlomoc.ex3;
 
 import android.util.Log;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,8 +11,6 @@ public class Task {
     final private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH), DATE_F= new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH) , TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
     private int id;
     private String title, description, date, time;
-
-
 
 
     public Task(String title, String description, String date, String time, int id) throws IllegalArgumentException {
@@ -68,7 +65,6 @@ public class Task {
 
     public int getId() { return id; }
 
-
     @Override
     public String toString() {
         return "task " + title + " in date " +
@@ -76,9 +72,9 @@ public class Task {
                 time  + " description: " + description;
     }
 
+    /*checks that the title and description contain at least one character
+     and test the date/time to see if it is valid*/
     private void validateInput(String title, String description, String date, String time) {
-        /*checks that the title and description contain at least one character
-         and test the date/time to see if it is valid*/
         if (title.length() < 1)
             throw new IllegalArgumentException("Please enter title");
         if (description.length() < 1)
@@ -125,4 +121,7 @@ public class Task {
         return -1;
     }
 
+    public long getDateTime() {
+        return convertDateTime(date,time);
+    }
 }

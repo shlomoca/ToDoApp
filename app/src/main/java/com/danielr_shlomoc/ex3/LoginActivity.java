@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,8 +60,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginBtn.setOnClickListener(this);
         userName = findViewById(R.id.userNameID);
         userPassword = findViewById(R.id.userPasswordID);
+        setAcknowledgement();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-
+        String user = sp.getString("user", null);
+        if(user!=null)
+            login(false);
 
     }
 
@@ -96,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String title, message, positive;
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
         title = "About App";
-        message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 05/04/21.";
+        message = "ToDoApp (com.danielr_shlomoc.ex3)\n\nBy Daniel Raz & Shlomo Carmi, 18/05/21.";
         positive = "OK";
         myDialog.setIcon(R.mipmap.todo_icon_round);
         myDialog.setPositiveButton(positive, new DialogInterface.OnClickListener() {
@@ -146,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     password = cr.getString(passwordColumn);
 
                     if (userPassword.equals(password))
-                        login();
+                        login(true);
                     else
                         Toast.makeText(this, "Wrong password please try again", Toast.LENGTH_LONG).show();
 
@@ -161,15 +165,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (!userExist) {
 //            addUser(userName, userPassword);
             dataBase.addUser(userName, userPassword);
-            login();
+            login(true);
         }
 
     }
 
     //This function login and move to ToDoListActivity
-    private void login() {
+    private void login(boolean saveUser) {
         Intent toDoListActivity = new Intent(this, ToDoListActivity.class);
+        if(saveUser){
+        String temp = this.userName.getText().toString();
+            sp.edit().putString("user", temp).apply();
+        }
         startActivity(toDoListActivity);
+        this.finish();
+    }
+    private void setAcknowledgement(){
+        userPassword.setImeActionLabel("Login", KeyEvent.KEYCODE_ENTER);
+    userPassword.setOnKeyListener(new View.OnKeyListener() {
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            // If the event is a key-down event on the "enter" button
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                // Perform action on key press
+                authentication();
+                return true;
+            }
+            return false;
+        }
+    });
     }
 
     //This function add new user to database
@@ -197,12 +221,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onPause() {
         super.onPause();
         Log.d("mylog", "onPause()\n");
-        String temp = this.userName.getText().toString();
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("user", temp);
-        editor.commit();
+
 
     }
+
 
     @Override
     protected void onResume() {
@@ -210,4 +232,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.d("mylog", "onResume()\n");
 
     }
+
 }

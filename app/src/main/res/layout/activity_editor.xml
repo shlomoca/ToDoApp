@@ -89,6 +89,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
+            android:hint="@string/dd_mm_yyyy"
+            android:gravity="center_horizontal"
             android:inputType="date"
             android:autofillHints="task_date"
             />
@@ -124,6 +126,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
+            android:hint="@string/hh_mm"
+            android:gravity="center_horizontal"
             android:inputType="time"
             android:autofillHints="task_date"
             />
