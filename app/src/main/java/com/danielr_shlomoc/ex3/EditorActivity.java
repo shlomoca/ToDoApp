@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -51,10 +52,11 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit().clear().apply();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         username = sp.getString("user", null);
-        taskID = sp.getInt("taskID", -1);
+        taskID = getIntent().getIntExtra("_id",-1);
         if (taskID > -1) {
             Task task = new Task(taskID);
-            loadTask(task);
+            Log.d("id",Integer.toString(this.taskID));
+//            loadTask(task);
         }
         dataBase = new DataBase(this);
 
@@ -163,10 +165,28 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     private void loadTask(Task t) {
         //load an existing task to the screen
-        titleEdt.setText(t.getTitle());
-        descEdt.setText(t.getDescription());
-        dateEdt.setText(t.getDate());
-        timeEdt.setText(t.getTime());
+
+        Cursor cr = dataBase.getTask(this.taskID);
+
+        if (cr.moveToFirst()) {
+            int id = cr.getColumnIndex("_id");
+            int taskTitle = cr.getColumnIndex("title");
+            int description = cr.getColumnIndex("description");
+            int dateTime = cr.getColumnIndex("datetime");
+            do {
+                titleEdt.setText(cr.getString(taskTitle));
+                descEdt.setText(cr.getString(description));
+                dateEdt.setText(Task.convertDate(cr.getLong(dateTime)));
+                timeEdt.setText(Task.convertTime(cr.getLong(dateTime)));
+            }
+            while (cr.moveToNext());
+            cr.close();
+        }
+
+//        titleEdt.setText(t.getTitle());
+//        descEdt.setText(t.getDescription());
+//        dateEdt.setText(t.getDate());
+//        timeEdt.setText(t.getTime());
         String s = String.format("%s%d)", getString(R.string.update_Todo), taskID);
         title.setText(s);
         addBtn.setText(R.string.update);

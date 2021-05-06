@@ -29,15 +29,16 @@ public class Task {
 //        FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
 //        DATE_F = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 //        TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-        loadTaskFromDB();
-        this.id = id;
+        loadTaskFromDB(id);
+//        this.id = id;
     }
 
-    private void loadTaskFromDB() {
+    private void loadTaskFromDB(int id) {
 //        this.title = title;
 //        this.description = description;
 //        this.date = date;
 //        this.time = time;
+
     }
     private void saveTaskInDB() {
     //        this.title = title;
