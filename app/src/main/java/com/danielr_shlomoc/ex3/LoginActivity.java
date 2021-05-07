@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String userPassword = this.userPassword.getText().toString();
         boolean userExist = false;
         String[] columns = {"username", "password"};
-        Cursor cr = dataBase.selectColumns(columns, "users");
+        Cursor cr = dataBase.selectColumns(columns, "users",null);
         String password = "";
 
         int usernameColumn = cr.getColumnIndex("username");

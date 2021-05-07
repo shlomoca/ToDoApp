@@ -147,6 +147,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
 
     private void addTask() {
         Intent editorActivity = new Intent(this, EditorActivity.class);
+        editorActivity.putExtra("_id", -1);
         startActivity(editorActivity);
     }
 

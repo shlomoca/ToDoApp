@@ -3,7 +3,6 @@ package com.danielr_shlomoc.ex3;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -29,12 +28,12 @@ import java.util.Locale;
 
 public class EditorActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
+    NotificationHandler notificationHandler;
     private Button addBtn, dateBtn, timeBtn;
     private EditText timeEdt, dateEdt, descEdt, titleEdt;
     private TextView title;
     private SharedPreferences sp;
     private int dateLen, timeLen, taskID;
-    NotificationHandler notificationHandler;
     private String username;
     private DataBase dataBase;
 
@@ -52,13 +51,11 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         getSharedPreferences("saved_editor", Context.MODE_PRIVATE).edit().clear().apply();
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         username = sp.getString("user", null);
-        taskID = getIntent().getIntExtra("_id",-1);
-        if (taskID > -1) {
-            Task task = new Task(taskID);
-            Log.d("id",Integer.toString(this.taskID));
-//            loadTask(task);
-        }
+        taskID = getIntent().getIntExtra("_id", -1);
         dataBase = new DataBase(this);
+        if (taskID > -1)
+            loadTask();
+
 
     }
 
@@ -80,10 +77,11 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         saveScreen();
 
     }
-    private void resetScreen(boolean fromMemory){
+
+    private void resetScreen(boolean fromMemory) {
         if (fromMemory)
             loadScreen();
-        else{
+        else {
             title.setText(R.string.add_new_todo);
             addBtn.setText(R.string.add);
             timeEdt.setText("");
@@ -163,13 +161,13 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         return new Task(title, description, date, time, taskID);
     }
 
-    private void loadTask(Task t) {
+    private void loadTask() {
         //load an existing task to the screen
 
         Cursor cr = dataBase.getTask(this.taskID);
 
         if (cr.moveToFirst()) {
-            int id = cr.getColumnIndex("_id");
+
             int taskTitle = cr.getColumnIndex("title");
             int description = cr.getColumnIndex("description");
             int dateTime = cr.getColumnIndex("datetime");
@@ -183,10 +181,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             cr.close();
         }
 
-//        titleEdt.setText(t.getTitle());
-//        descEdt.setText(t.getDescription());
-//        dateEdt.setText(t.getDate());
-//        timeEdt.setText(t.getTime());
         String s = String.format("%s%d)", getString(R.string.update_Todo), taskID);
         title.setText(s);
         addBtn.setText(R.string.update);
@@ -196,9 +190,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         //creates a textWatcher that hides the keyboard when Editable gets to letters
         return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -216,14 +213,14 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void saveTask(Task t) {
-        Log.i("mylog","saving task");
+        Log.i("mylog", "saving task");
 
         //get task id from db
 
         notificationHandler.cancelAlarm(t.getId());
         notificationHandler.createOneTimeAlarm(t);
         resetScreen(false);
-        Toast.makeText(this,"Todo was UPDATED",Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Todo was UPDATED", Toast.LENGTH_LONG).show();
 
     }
 
@@ -234,8 +231,17 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.add_task_btn:
                 try {
                     Task t = createTask();
-                    dataBase.addTask(this.username,t);
-                    saveTask(t);
+                    // update task case
+                    if (this.taskID > -1) {
+                        dataBase.updateTask(this.taskID, t);
+                        Toast.makeText(this,"Todo was UPDATED",Toast.LENGTH_LONG).show();
+                    }
+                    // new task case
+                    else {
+                        dataBase.addTask(this.username, t);
+                        saveTask(t);
+
+                    }
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -258,7 +264,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        String time = String.format("%02d:%02d" , hourOfDay,minute);
+        String time = String.format("%02d:%02d", hourOfDay, minute);
         timeEdt.setText(time);
     }
 

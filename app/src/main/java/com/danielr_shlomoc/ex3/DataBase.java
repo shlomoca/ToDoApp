@@ -52,7 +52,7 @@ public class DataBase {
     }
 
     // This function get array of preferably columns from the the given table and return a Cursor to the data.
-    public Cursor selectColumns(String[] columnsArray, String table) {
+    public Cursor selectColumns(String[] columnsArray, String table,String condition) {
         String columns = "";
 
         for (int i = 0; i < columnsArray.length; i++) {
@@ -60,24 +60,28 @@ public class DataBase {
         }
 
         String query = "SELECT " + columns + " FROM " + table;
+        if(condition != null)
+            query += " WHERE "+condition;
         return todosDB.rawQuery(query, null);
     }
 
     public Cursor getTask(int id) {
         String columns[] = {"_id", "title", "description", "datetime"};
 
-        Cursor cr = selectColumns(columns,"todos");
-        if (cr.moveToFirst()) {
-//            int id = cr.getColumnIndex("_id");
-            int taskTitle = cr.getColumnIndex("title");
-            int description = cr.getColumnIndex("description");
-            int dateTime = cr.getColumnIndex("datetime");
-            do {
+        Cursor cr = selectColumns(columns, "todos","_id = "+"'"+id+"';");
+//        if (cr.moveToFirst()) {
+////            int id = cr.getColumnIndex("_id");
+//            int taskTitle = cr.getColumnIndex("title");
+//            int description = cr.getColumnIndex("description");
+//            int dateTime = cr.getColumnIndex("datetime");
+//            do {
+//                Log.d("id",cr.getString(taskTitle)+"\n"+cr.getString(description));
+//            }
+//            while (cr.moveToNext());
+//            cr.close();
+//        }
 
-            }
-            while (cr.moveToNext());
-            cr.close();
-        }
+
         return cr;
     }
 
@@ -92,7 +96,7 @@ public class DataBase {
         String addTask = "INSERT INTO todos (username , title , description , datetime ) VALUES ('" + username + "', '" + t.getTitle() + "', '" + t.getDescription() + "', '" + t.convertDateTime(t.getDate(), t.getTime()) + "');";
         todosDB.execSQL(addTask);
         String[] idColumn = {"_id"};
-        Cursor cr = selectColumns(idColumn, "todos");
+        Cursor cr = selectColumns(idColumn, "todos",null);
 
         int id = cr.getColumnIndex("_id");
 
@@ -106,9 +110,22 @@ public class DataBase {
 
     }
 
+    public void updateTask(int id, Task t) {
+        try {
+            String query = "UPDATE todos SET title = " + "'" + t.getTitle() + "'" + ", description = " + "'" + t.getDescription() + "'" + ", datetime = " + "'" + Task.convertDateTime(t.getDate(), t.getDescription()) + "'" + " WHERE _id = " + id + ";";
+            todosDB.execSQL(query);
+        } catch (Exception e) {
+
+        }
+    }
+
     public void removeTask(int id) {
-        String sql = "DELETE FROM todos WHERE _id = " + id;
-        todosDB.execSQL(sql);
+        try {
+            String sql = "DELETE FROM todos WHERE _id = " + id;
+            todosDB.execSQL(sql);
+        } catch (Exception e) {
+
+        }
     }
 
 
