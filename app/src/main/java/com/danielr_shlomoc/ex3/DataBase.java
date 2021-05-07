@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class DataBase {
 
@@ -65,7 +66,7 @@ public class DataBase {
         return todosDB.rawQuery(query, null);
     }
 
-    public Cursor getTask(int id) {
+    public Cursor getTaskCursor(int id) {
         String columns[] = {"_id", "title", "description", "datetime"};
 
         Cursor cr = selectColumns(columns, "todos","_id = "+"'"+id+"';");
@@ -85,6 +86,27 @@ public class DataBase {
         return cr;
     }
 
+    Task getTask(int id){
+        Cursor cr = this.getTaskCursor(id);
+        Task task = null;
+        if (cr.moveToFirst()) {
+
+            int taskTitleIndex = cr.getColumnIndex("title");
+            int descriptionIndex = cr.getColumnIndex("description");
+            int dateTimeIndex = cr.getColumnIndex("datetime");
+            do {
+                long dateTime = cr.getLong(dateTimeIndex);
+
+                task = new Task(cr.getString(taskTitleIndex),cr.getString(descriptionIndex),Task.convertDate(dateTime),Task.convertTime(dateTime),id);
+
+            }
+            while (cr.moveToNext());
+            cr.close();
+        }
+        return task;
+
+    }
+
     // This function get username and his password and added the user to database
     public void addUser(String userName, String userPassword) {
         String addUser = "INSERT INTO users (username, password) VALUES ('" + userName + "', '" + userPassword + "');";
@@ -93,7 +115,7 @@ public class DataBase {
 
     // This function get username and add his task to database
     public void addTask(String username, Task t) {
-        String addTask = "INSERT INTO todos (username , title , description , datetime ) VALUES ('" + username + "', '" + t.getTitle() + "', '" + t.getDescription() + "', '" + t.convertDateTime(t.getDate(), t.getTime()) + "');";
+        String addTask = "INSERT INTO todos (username , title , description , datetime ) VALUES ('" + username + "', '" + t.getTitle() + "', '" + t.getDescription() + "', '" + t.getDateTime() + "');";
         todosDB.execSQL(addTask);
         String[] idColumn = {"_id"};
         Cursor cr = selectColumns(idColumn, "todos",null);
@@ -112,9 +134,9 @@ public class DataBase {
 
     public void updateTask(int id, Task t) {
         try {
-            String query = "UPDATE todos SET title = " + "'" + t.getTitle() + "'" + ", description = " + "'" + t.getDescription() + "'" + ", datetime = " + "'" + Task.convertDateTime(t.getDate(), t.getDescription()) + "'" + " WHERE _id = " + id + ";";
+            String query = "UPDATE todos SET title = " + "'" + t.getTitle() + "'" + ", description = " + "'" + t.getDescription() + "'" + ", datetime = " + "'" + t.getDateTime() + "'" + " WHERE _id = " + id + ";";
             todosDB.execSQL(query);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }

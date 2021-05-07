@@ -20,12 +20,11 @@ public class NotificationHandler {
 
     private static final String CHANNEL_ID = "channel_main";
     private static final CharSequence CHANNEL_NAME = "Main Channel";
-    public static boolean freshGame = false, paused = false;
     private final NotificationManager notificationManager;
-    private IntentFilter filter;
     private Context context;
     private AlarmManager alarmManager;
     private Intent alarmIntent;
+    private DataBase DB;
 
 
     //    protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +34,7 @@ public class NotificationHandler {
         notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmIntent = new Intent(context, AlarmClockReceiver.class);
+        DB = new DataBase(context);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(notificationChannel);
@@ -43,7 +43,7 @@ public class NotificationHandler {
 
     //show user a notification of a task based on its ID
     public void ShowNotification(int id) {
-        Task task = getTask(id);
+        Task task = DB.getTask(id);
         long time= System.currentTimeMillis();
         boolean overMinuteDifference = (task.getDateTime() - time) > 61 * 1000;
         Log.i("mylog","is it over minute? "+ overMinuteDifference+ " current time = " + time +" task time = " + task.getDateTime());
@@ -55,14 +55,6 @@ public class NotificationHandler {
                     .setPriority(NotificationCompat.PRIORITY_HIGH).build();
             notificationManager.notify(task.getId(), notification);
         }
-    }
-
-    //this function will call a task from the DB based on the task ID
-    private Task getTask(int id) {
-        Task task;
-        //for test reasons creating a new task
-        task = new Task("example Task", "this is an example task", "06/06/2021", "11:00", id);
-        return task;
     }
 
     public void cancelAlarm(int taskID) {

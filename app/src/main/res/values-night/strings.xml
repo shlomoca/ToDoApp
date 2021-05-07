@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">ToDoApp</string>
+    <string name="title">Title:</string>
+    <string name="description">Description:</string>
+    <string name="date">date:</string>
+    <string name="picker">Picker:</string>
+    <string name="time">time:</string>
     <string name="add">add</string>
     <string name="add_new_todo">Add new Todo</string>
     <string name="update_Todo">Update Todo (id=</string>
     <string name="update">UPDATE</string>
+    <string name="user_name">user name</string>
     <string name="password">password</string>
     <string name="log_in">LOG IN</string>
+    <string name="dd_mm_yyyy">dd/mm/yyyy</string>
     <string name="hh_mm">hh:mm</string>
 </resources>
