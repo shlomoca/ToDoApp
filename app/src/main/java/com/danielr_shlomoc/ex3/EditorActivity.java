@@ -8,7 +8,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -36,6 +35,31 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private String username;
     private DataBase dataBase;
 
+    /*test if a string has a symbol at the most at the third char if not it will add it the char
+    built mainly to test for separators in date or time*/
+    public static String fixStr(String str, char testSymbol) {
+        int len = str.length(), i = str.indexOf(testSymbol);
+        if (i < 0) {
+            if (len >= 3)
+                return str.substring(0, 2) + testSymbol + str.substring(2);
+        }
+        return str;
+    }
+    /*test a string and see it is in format ??/??/???? if not it will add the separators*/
+    public static String fixDate(String str) {
+        int i = str.indexOf('/'), j = str.lastIndexOf('/');
+        String subStr = fixStr(str, '/');
+        if (i == j && !subStr.equals(str))
+            str = subStr;
+        i = str.indexOf('/');
+        j = str.lastIndexOf('/');
+        if (j == i) {
+            String a = str.substring(0, i + 1), b = str.substring(i + 1);
+            b = fixStr(b, '/');
+            str = a.concat(b);
+        }
+        return str;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,8 +171,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         dateBtn.setOnClickListener(this);
         timeBtn.setOnClickListener(this);
 
-        timeEdt.addTextChangedListener(createTextWatcher(timeLen));
-        dateEdt.addTextChangedListener(createTextWatcher(dateLen));
+        timeEdt.addTextChangedListener(createTextWatcher(timeLen, false));
+        dateEdt.addTextChangedListener(createTextWatcher(dateLen, true));
     }
 
     //create a task from the fields in the activity
@@ -174,7 +198,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     //creates a textWatcher that hides the keyboard when Editable gets to letters
-    private TextWatcher createTextWatcher(int letters) {
+    private TextWatcher createTextWatcher(int letters, boolean isDate) {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -186,11 +210,29 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().length() == letters)
+                int strLen = s.toString().length();
+                if (strLen == letters)
                     HideKeyboardFormUser();
+                else {
+                    //check if adding a symbol is necessary
+                    String str = s.toString(), fixed;
+                    if (isDate)
+                        fixed = fixDate(s.toString());
+                    else
+                        fixed = fixStr(s.toString(), ':');
+
+                if (!fixed.equals(str)) {
+                    s.clear();
+                    s.append(fixed);
+                }
             }
-        };
+
+        }
+
     }
+
+    ;
+}
 
     private void HideKeyboardFormUser() {
         View view = getCurrentFocus();

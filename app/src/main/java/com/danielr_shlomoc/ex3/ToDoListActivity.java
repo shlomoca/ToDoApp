@@ -159,11 +159,12 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onQueryTextChange(String newText) {
         /*This handle the search task*/
-        Log.d("search", newText);
-        ArrayList<AndroidTaskItem> temp = new ArrayList<AndroidTaskItem>();
+        ArrayList<AndroidTaskItem> temp = new ArrayList<>();
         for (int i = 0; i < androidTask.size(); i++) {
             AndroidTaskItem t = androidTask.get(i);
-            if (t.getTaskTitle().contains(newText) || t.getDescription().contains(newText))
+            String title = t.getTaskTitle().toLowerCase(), description = t.getDescription().toLowerCase();
+            newText = newText.toLowerCase();
+            if (title.contains(newText) || description.contains(newText))
                 temp.add(new AndroidTaskItem(t.getId(), t.getTaskTitle(), t.getDescription(), Task.convertDateTime(t.getDate(), t.getTime())));
         }
         taskAdapter = new AndroidTaskAdapter(this, temp);

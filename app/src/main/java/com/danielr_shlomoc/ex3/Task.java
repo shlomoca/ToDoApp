@@ -55,13 +55,14 @@ public class Task {
             throw new IllegalArgumentException("Please enter title");
         if (description.length() < 1)
             throw new IllegalArgumentException("Please enter description");
-        SimpleDateFormat timeF = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         try {
-            timeF.parse(time);
+            TIME_F.setLenient(false);
+            TIME_F.parse(time);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Illegal time. time format is hh:mm");
         }
         try {
+            DATE_F.setLenient(false);
             DATE_F.parse(date);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Illegal date. date format is dd/mm/yyyy");
