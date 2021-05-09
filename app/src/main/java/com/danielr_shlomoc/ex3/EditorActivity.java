@@ -5,7 +5,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -200,13 +199,14 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             hideKeyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void setAlarm(Task t) {
-        Log.i("mylog", "saving task");
-
+    private void setAlarm(Task t, boolean killActivity) {
         //get task id from db
         notificationHandler.cancelAlarm(t.getId());
         notificationHandler.createOneTimeAlarm(t);
-        resetScreen(false);
+        if (killActivity)
+            finish();
+        else
+            resetScreen(false);
 
     }
 
@@ -214,22 +214,26 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
 
         switch (view.getId()) {
+
             case R.id.add_task_btn:
                 try {
+                    boolean killActivity = false;
                     Task t = createTask();
                     String message;
                     // update task case
                     if (this.taskID > -1) {
                         dataBase.updateTask(this.taskID, t);
                         message = "Todo was UPDATED";
+                        killActivity = true;
+
                     }
                     // new task case
                     else {
                         dataBase.addTask(this.username, t);
                         message = "Todo was ADDED ";
                     }
-                        setAlarm(t);
-                        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                    setAlarm(t, killActivity);
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
