@@ -26,32 +26,24 @@ public class AndroidTaskAdapter extends ArrayAdapter<AndroidTaskItem> {
         // Check if the existing view is being reused, otherwise inflate the view
         if(convertView == null)
         {
-            //convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+
             convertView = View.inflate(getContext(), R.layout.list_item, null);
         }
-        // Get the {@link AndroidFlavor} object located at this position in the list
+
         AndroidTaskItem currentAndroidTask = getItem(position);
 
-        // Find the TextView in the list_item2.xmll layout with the ID version_name
+
         TextView txvTaskTitle = convertView.findViewById(R.id.titleTxvID);
-        // Get the version name from the current AndroidFlavor object and
-        // set this text on the name TextView
         txvTaskTitle.setText(currentAndroidTask.getTaskTitle());
 
 
         TextView date = convertView.findViewById(R.id.dateTxvID);
-        // Get the version name from the current AndroidFlavor object and
-        // set this text on the name TextView
         date.setText(currentAndroidTask.getDate());
 
-        TextView decription = convertView.findViewById(R.id.descriptionTxvID);
-        // Get the version name from the current AndroidFlavor object and
-        // set this text on the name TextView
-        decription.setText(currentAndroidTask.getDescription());
+        TextView description = convertView.findViewById(R.id.descriptionTxvID);
+        description.setText(currentAndroidTask.getDescription());
 
         TextView time = convertView.findViewById(R.id.timeTxvID);
-        // Get the version name from the current AndroidFlavor object and
-        // set this text on the name TextView
         time.setText(currentAndroidTask.getTime());
 
 
