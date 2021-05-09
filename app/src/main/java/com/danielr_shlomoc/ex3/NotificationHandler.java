@@ -45,7 +45,7 @@ public class NotificationHandler {
     public void ShowNotification(int id) {
         Task task = DB.getTask(id);
         long time= System.currentTimeMillis();
-        boolean overMinuteDifference = (task.getDateTime() - time) > 61 * 1000;
+        boolean overMinuteDifference = Math.abs(time - task.getDateTime()) > 61 * 1000;
         Log.i("mylog","is it over minute? "+ overMinuteDifference+ " current time = " + time +" task time = " + task.getDateTime());
         if (task != null && !overMinuteDifference) {
             Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
