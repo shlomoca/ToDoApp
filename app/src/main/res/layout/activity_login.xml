@@ -9,7 +9,7 @@
     android:layout_marginStart="30dp"
     android:layout_gravity="center"
     tools:context=".LoginActivity"
-    android:background="#E4E3E3"
+    android:background="#218FBC"
     >
 
     <ImageView

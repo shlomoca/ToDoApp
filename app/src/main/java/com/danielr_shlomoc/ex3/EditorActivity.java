@@ -5,7 +5,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -54,7 +53,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         taskID = getIntent().getIntExtra("_id", -1);
         dataBase = new DataBase(this);
         if (taskID > -1)
-            loadTask();
+            loadTaskToScreen();
 
 
     }
@@ -133,8 +132,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    //connects all widgets and sets them listeners
     private void connectWidgets() {
-        //connects all widgets and sets them listeners
         addBtn = findViewById(R.id.add_task_btn);
         dateBtn = findViewById(R.id.pick_date_btn);
         timeBtn = findViewById(R.id.pick_time_btn);
@@ -161,33 +160,21 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         return new Task(title, description, date, time, taskID);
     }
 
-    private void loadTask() {
-        //load an existing task to the screen
-
-        Cursor cr = dataBase.getTask(this.taskID);
-
-        if (cr.moveToFirst()) {
-
-            int taskTitle = cr.getColumnIndex("title");
-            int description = cr.getColumnIndex("description");
-            int dateTime = cr.getColumnIndex("datetime");
-            do {
-                titleEdt.setText(cr.getString(taskTitle));
-                descEdt.setText(cr.getString(description));
-                dateEdt.setText(Task.convertDate(cr.getLong(dateTime)));
-                timeEdt.setText(Task.convertTime(cr.getLong(dateTime)));
-            }
-            while (cr.moveToNext());
-            cr.close();
-        }
-
+    //load an existing task to the screen
+    private void loadTaskToScreen() {
+        DataBase db = new DataBase(this);
+        Task task = db.getTask(this.taskID);
+        titleEdt.setText(task.getTitle());
+        descEdt.setText(task.getDescription());
+        dateEdt.setText(task.getDate());
+        timeEdt.setText(task.getTime());
         String s = String.format("%s%d)", getString(R.string.update_Todo), taskID);
         title.setText(s);
         addBtn.setText(R.string.update);
     }
 
+    //creates a textWatcher that hides the keyboard when Editable gets to letters
     private TextWatcher createTextWatcher(int letters) {
-        //creates a textWatcher that hides the keyboard when Editable gets to letters
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -212,15 +199,14 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             hideKeyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void saveTask(Task t) {
-        Log.i("mylog", "saving task");
-
+    private void setAlarm(Task t, boolean killActivity) {
         //get task id from db
-
         notificationHandler.cancelAlarm(t.getId());
         notificationHandler.createOneTimeAlarm(t);
-        resetScreen(false);
-//        Toast.makeText(this, "Todo was UPDATED", Toast.LENGTH_LONG).show();
+        if (killActivity)
+            finish();
+        else
+            resetScreen(false);
 
     }
 
@@ -228,20 +214,26 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
 
         switch (view.getId()) {
+
             case R.id.add_task_btn:
                 try {
+                    boolean killActivity = false;
                     Task t = createTask();
+                    String message;
                     // update task case
                     if (this.taskID > -1) {
                         dataBase.updateTask(this.taskID, t);
-                        Toast.makeText(this,"Todo was UPDATED",Toast.LENGTH_LONG).show();
+                        message = "Todo was UPDATED";
+                        killActivity = true;
+
                     }
                     // new task case
                     else {
                         dataBase.addTask(this.username, t);
-                        saveTask(t);
-
+                        message = "Todo was ADDED ";
                     }
+                    setAlarm(t, killActivity);
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();

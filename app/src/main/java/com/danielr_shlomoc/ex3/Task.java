@@ -14,7 +14,6 @@ public class Task {
 
 
     public Task(String title, String description, String date, String time, int id) throws IllegalArgumentException {
-
         validateInput(title, description, date, time);
         this.title = title;
         this.description = description;
@@ -23,24 +22,6 @@ public class Task {
         this.id = id;
 
     }
-
-    public Task(int id) throws IllegalArgumentException {
-        loadTaskFromDB(id);
-    }
-
-    private void loadTaskFromDB(int id) {
-//        this.title = title;
-//        this.description = description;
-//        this.date = date;
-//        this.time = time;
-
-    }
-    private void saveTaskInDB() {
-    //        this.title = title;
-    //        this.description = description;
-    //        this.date = date;
-    //        this.time = time;
-        }
 
     public String getTitle() {
         return title;

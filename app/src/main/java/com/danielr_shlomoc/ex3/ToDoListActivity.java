@@ -161,7 +161,6 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
         /*This handle the search task*/
         Log.d("search", newText);
         ArrayList<AndroidTaskItem> temp = new ArrayList<AndroidTaskItem>();
-
         for (int i = 0; i < androidTask.size(); i++) {
             AndroidTaskItem t = androidTask.get(i);
             if (t.getTaskTitle().contains(newText) || t.getDescription().contains(newText))

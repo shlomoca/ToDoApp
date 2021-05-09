@@ -12,6 +12,6 @@
     <string name="user_name">user name</string>
     <string name="password">password</string>
     <string name="log_in">LOG IN</string>
-    <string name="dd_mm_yyyy">dd:mm:yyyy</string>
+    <string name="dd_mm_yyyy">dd/mm/yyyy</string>
     <string name="hh_mm">hh:mm</string>
 </resources>
