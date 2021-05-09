@@ -69,18 +69,6 @@ public class DataBase {
         String columns[] = {"_id", "title", "description", "datetime"};
 
         Cursor cr = selectColumns(columns, "todos","_id = "+"'"+id+"';");
-//        if (cr.moveToFirst()) {
-////            int id = cr.getColumnIndex("_id");
-//            int taskTitle = cr.getColumnIndex("title");
-//            int description = cr.getColumnIndex("description");
-//            int dateTime = cr.getColumnIndex("datetime");
-//            do {
-//                Log.d("id",cr.getString(taskTitle)+"\n"+cr.getString(description));
-//            }
-//            while (cr.moveToNext());
-//            cr.close();
-//        }
-
 
         return cr;
     }
