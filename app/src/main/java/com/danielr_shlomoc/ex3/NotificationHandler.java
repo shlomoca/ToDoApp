@@ -7,7 +7,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
 
@@ -44,17 +43,22 @@ public class NotificationHandler {
     //show user a notification of a task based on its ID
     public void ShowNotification(int id) {
         Task task = DB.getTask(id);
-        long time= System.currentTimeMillis();
-        boolean overMinuteDifference = Math.abs(time - task.getDateTime()) > 61 * 1000;
-        Log.i("mylog","is it over minute? "+ overMinuteDifference+ " current time = " + time +" task time = " + task.getDateTime());
-        if (task != null && !overMinuteDifference) {
-            Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.todo_icon_round)
-                    .setContentTitle(task.getTitle())
-                    .setContentText(task.getDescription())
-                    .setPriority(NotificationCompat.PRIORITY_HIGH).build();
-            notificationManager.notify(task.getId(), notification);
+        long time = System.currentTimeMillis();
+
+        if (task != null) {
+            boolean overMinuteDifference = Math.abs(time - task.getDateTime()) > 61 * 1000;
+            if (!overMinuteDifference) {
+                Log.i("mylog", "is it over minute? " + overMinuteDifference + " current time = " + time + " task time = " + task.getDateTime());
+                Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.todo_icon_round)
+                        .setContentTitle(task.getTitle())
+                        .setContentText(task.getDescription())
+                        .setPriority(NotificationCompat.PRIORITY_HIGH).build();
+                notificationManager.notify(task.getId(), notification);
+            }
         }
+
+
     }
 
     public void cancelAlarm(int taskID) {
