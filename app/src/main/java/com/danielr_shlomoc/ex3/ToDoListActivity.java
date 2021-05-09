@@ -163,7 +163,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
         ArrayList<AndroidTaskItem> temp = new ArrayList<AndroidTaskItem>();
         for (int i = 0; i < androidTask.size(); i++) {
             AndroidTaskItem t = androidTask.get(i);
-            if (t.getTaskTitle().startsWith(newText) || t.getDescription().startsWith(newText))
+            if (t.getTaskTitle().contains(newText) || t.getDescription().contains(newText))
                 temp.add(new AndroidTaskItem(t.getId(), t.getTaskTitle(), t.getDescription(), Task.convertDateTime(t.getDate(), t.getTime())));
         }
         taskAdapter = new AndroidTaskAdapter(this, temp);
