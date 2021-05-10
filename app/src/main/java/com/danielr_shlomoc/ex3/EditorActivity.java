@@ -45,6 +45,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         }
         return str;
     }
+
     /*test a string and see it is in format ??/??/???? if not it will add the separators*/
     public static String fixDate(String str) {
         int i = str.indexOf('/'), j = str.lastIndexOf('/');
@@ -101,6 +102,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    //reset the screen and and emt
     private void resetScreen(boolean fromMemory) {
         if (fromMemory)
             loadScreen();
@@ -115,8 +117,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    //puts all of the screen in the shared preferences
     private void saveScreen() {
-        //puts all of the screen in the shared preferences
         SharedPreferences preferences = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
         SharedPreferences.Editor e = preferences.edit();
         String date = dateEdt.getText().toString();
@@ -136,8 +138,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         e.apply();
     }
 
+    //loads all screen elements to their place the shared p
     private void loadScreen() {
-        //loads all screen elements to their place the shared p
         SharedPreferences p = getSharedPreferences("saved_editor", Context.MODE_PRIVATE);
         if (p.getBoolean("saved_editor", false)) {
             String date = p.getString("date", "");
@@ -221,18 +223,18 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     else
                         fixed = fixStr(s.toString(), ':');
 
-                if (!fixed.equals(str)) {
-                    s.clear();
-                    s.append(fixed);
+                    if (!fixed.equals(str)) {
+                        s.clear();
+                        s.append(fixed);
+                    }
                 }
+
             }
 
         }
 
+                ;
     }
-
-    ;
-}
 
     private void HideKeyboardFormUser() {
         View view = getCurrentFocus();
@@ -241,6 +243,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             hideKeyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    //set alarm for task and cancel previous if existed. if kill activity return to previous activity
     private void setAlarm(Task t, boolean killActivity) {
         //get task id from db
         notificationHandler.cancelAlarm(t.getId());
@@ -256,7 +259,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
 
         switch (view.getId()) {
-
             case R.id.add_task_btn:
                 try {
                     boolean killActivity = false;
@@ -267,7 +269,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                         dataBase.updateTask(this.taskID, t);
                         message = "Todo was UPDATED";
                         killActivity = true;
-
                     }
                     // new task case
                     else {
@@ -283,17 +284,15 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
                 break;
             case R.id.pick_date_btn:
-                com.danielr_shlomoc.ex3.DatePicker mDatePickerDialogFragment;
-                mDatePickerDialogFragment = new com.danielr_shlomoc.ex3.DatePicker();
-                mDatePickerDialogFragment.show(getSupportFragmentManager(), "DATE PICK");
+                com.danielr_shlomoc.ex3.DatePicker mDatePickerDialog;
+                mDatePickerDialog = new com.danielr_shlomoc.ex3.DatePicker();
+                mDatePickerDialog.show(getSupportFragmentManager(), "DATE PICK");
                 break;
             case R.id.pick_time_btn:
-                DialogFragment timePicker = new TimePickerFragment();
+                DialogFragment timePicker = new com.danielr_shlomoc.ex3.TimePicker();
                 timePicker.show(getSupportFragmentManager(), "time picker");
                 break;
-
         }
-
     }
 
     @Override

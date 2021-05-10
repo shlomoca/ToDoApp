@@ -8,9 +8,12 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Task {
-    final private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH), DATE_F= new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH) , TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+    final private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH), DATE_F = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH), TIME_F = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
     private int id;
-    private String title, description, date, time;
+    private final String title;
+    private final String description;
+    private final String date;
+    private final String time;
 
 
     public Task(String title, String description, String date, String time, int id) throws IllegalArgumentException {
@@ -20,7 +23,38 @@ public class Task {
         this.date = date;
         this.time = time;
         this.id = id;
+    }
 
+    public Task(int id, String taskTitle, String description, long dateTime) {
+        this.id = id;
+        this.title = taskTitle;
+        this.description = description;
+        this.date = convertDate(dateTime);
+        this.time = convertTime(dateTime);
+    }
+
+    public static String convertTime(long time) {
+        Date date = new Date(time);
+        return TIME_F.format(date);
+    }
+
+    public static String convertDate(long time) {
+        Date date = new Date(time);
+        Log.d("date", DATE_F.format(date));
+        return DATE_F.format(date);
+    }
+
+    public static long convertDateTime(String date, String time) {
+        //convert date and time to long
+        try {
+            Date d = FORMATTER.parse(date + " " + time);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(d);
+            return cal.getTimeInMillis();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public String getTitle() {
@@ -39,13 +73,19 @@ public class Task {
         return time;
     }
 
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     @Override
     public String toString() {
         return "task " + title + " in date " +
-                date +" "+
-                time  + " description: " + description;
+                date + " " +
+                time + " description: " + description;
     }
 
     /*checks that the title and description contain at least one character
@@ -70,35 +110,7 @@ public class Task {
 
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public static String convertTime(long time) {
-        Date date = new Date(time);
-        return TIME_F.format(date);
-    }
-
-    public static String convertDate(long time) {
-        Date date = new Date(time);
-        Log.d("date",DATE_F.format(date));
-        return DATE_F.format(date);
-    }
-
-    public static long convertDateTime(String date, String time) {
-        //convert date and time to long
-        try {
-            Date d = FORMATTER.parse(date + " " + time);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(d);
-            return cal.getTimeInMillis();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
     public long getDateTime() {
-        return convertDateTime(date,time);
+        return convertDateTime(date, time);
     }
 }

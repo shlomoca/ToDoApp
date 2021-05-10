@@ -20,10 +20,10 @@ public class NotificationHandler {
     private static final String CHANNEL_ID = "channel_main";
     private static final CharSequence CHANNEL_NAME = "Main Channel";
     private final NotificationManager notificationManager;
-    private Context context;
-    private AlarmManager alarmManager;
-    private Intent alarmIntent;
-    private DataBase DB;
+    private final Context context;
+    private final AlarmManager alarmManager;
+    private final Intent alarmIntent;
+    private final DataBase DB;
 
 
     //    protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +48,23 @@ public class NotificationHandler {
         if (task != null) {
             boolean overMinuteDifference = Math.abs(time - task.getDateTime()) > 61 * 1000;
             if (!overMinuteDifference) {
-                Log.i("mylog", "is it over minute? " + overMinuteDifference + " current time = " + time + " task time = " + task.getDateTime());
+                //create intent to open the app from the notification
+                Intent notificationIntent = new Intent(context, LoginActivity.class);
+                PendingIntent openLogin = PendingIntent.getActivity(context, 0, notificationIntent, 0);
                 Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setSmallIcon(R.mipmap.todo_icon_round)
+                        .setSmallIcon(R.mipmap.todo_icon)
                         .setContentTitle(task.getTitle())
                         .setContentText(task.getDescription())
-                        .setPriority(NotificationCompat.PRIORITY_HIGH).build();
+                        .setPriority(NotificationCompat.PRIORITY_HIGH) // make notification show
+                        .setContentIntent(openLogin) // set open app in login activity
+                        .setAutoCancel(true) // set remove after click
+                        .build();
                 notificationManager.notify(task.getId(), notification);
             }
         }
-
-
     }
 
+    //remove a notification based on notification id
     public void cancelAlarm(int taskID) {
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, taskID, alarmIntent, PendingIntent.FLAG_NO_CREATE);
         if (alarmPendingIntent != null) {
@@ -79,12 +83,12 @@ public class NotificationHandler {
         int taskID = task.getId();
         alarmIntent.putExtra("taskID", taskID);
 
-        // Create PendingIntent to start the BroadcastReceiver when alarm is triggered.
-        // Params:
-        // 1. Context - activity context - this
-        // 2. int - the id of the alarm - ALARM_ID
-        // 3. Intent - intent - alarmIntent
-        // 4. int - flag - PendingIntent.FLAG_UPDATE_CURRENT
+        /* Create PendingIntent to start the BroadcastReceiver when alarm is triggered.
+         Params:
+         1. Context - activity context - this
+         2. int - the id of the alarm - ALARM_ID
+         3. Intent - intent - alarmIntent
+         4. int - flag - PendingIntent.FLAG_UPDATE_CURRENT */
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, taskID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

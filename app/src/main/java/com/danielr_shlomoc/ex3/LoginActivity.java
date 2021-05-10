@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,8 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String MY_DB_NAME = "TodosDB.db";
-    private SQLiteDatabase todosDB = null;
     private Button loginBtn;
     private EditText userName, userPassword;
     private SharedPreferences sp;
@@ -127,15 +124,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         myDialog.show();
     }
 
-
-
+    //test if user in EditText exists and checks the password provided
     private void authentication() {
 
         String userName = this.userName.getText().toString();
         String userPassword = this.userPassword.getText().toString();
         boolean userExist = false;
         String[] columns = {"username", "password"};
-        Cursor cr = dataBase.selectColumns(columns, "users",null);
+        Cursor cr = dataBase.selectColumns(columns, "users", null);
         String password = "";
 
         int usernameColumn = cr.getColumnIndex("username");
@@ -188,6 +184,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         this.finish();
     }
 
+    //set the keyboard enter to log in to the app
     private void setAcknowledgement() {
         userPassword.setImeOptions(EditorInfo.IME_ACTION_GO);
         userPassword.setOnKeyListener(new View.OnKeyListener() {

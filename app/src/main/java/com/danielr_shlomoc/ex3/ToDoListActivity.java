@@ -24,14 +24,10 @@ import java.util.ArrayList;
 
 public class ToDoListActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, ListView.OnItemClickListener, ListView.OnItemLongClickListener {
 
-    public static final String MY_DB_NAME = "TodosDB.db";
     private DataBase dataBase;
     private SharedPreferences sp;
     private String username;
-    private FloatingActionButton addTaskbtn;
-    private boolean loggedOut = false;
-    private ArrayList<AndroidTaskItem> androidTask;
-    private SearchView search;
+    private ArrayList<Task> androidTask;
     private ListView listView;
     private AndroidTaskAdapter taskAdapter;
 
@@ -40,11 +36,9 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do_list);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-
         dataBase = new DataBase(this);
-        addTaskbtn = findViewById(R.id.addTaskBtnID);
-        search = findViewById(R.id.searchViewID);
+        FloatingActionButton addTaskbtn = findViewById(R.id.addTaskBtnID);
+        SearchView search = findViewById(R.id.searchViewID);
         listView = findViewById(R.id.ListView1ID);
         search.setOnQueryTextListener(this);
         addTaskbtn.setOnClickListener(this);
@@ -52,15 +46,11 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
 
-
         sp = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         username = sp.getString("user", null);
         if (username == null)
             logout();
-
-
         setTitle("Todo List (" + username + ")");
-
     }
 
     @Override
@@ -96,7 +86,6 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.logoutBtnID) {
             // do something here
             logout();
@@ -107,34 +96,10 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     //This function logout and move to LoginActivity
     private void logout() {
         Intent loginActivity = new Intent(this, LoginActivity.class);
-        loggedOut = true;
         sp.edit().remove("user").apply();
         startActivity(loginActivity);
         this.finish();
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-//        if (loggedOut)
-//            sp.edit().remove("user").apply();
-
-
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -145,6 +110,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    //open the editor activity
     private void addTask() {
         Intent editorActivity = new Intent(this, EditorActivity.class);
         editorActivity.putExtra("_id", -1);
@@ -158,14 +124,14 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        /*This handle the search task*/
-        ArrayList<AndroidTaskItem> temp = new ArrayList<>();
+        /*handle the search task*/
+        ArrayList<Task> temp = new ArrayList<>();
         for (int i = 0; i < androidTask.size(); i++) {
-            AndroidTaskItem t = androidTask.get(i);
-            String title = t.getTaskTitle().toLowerCase(), description = t.getDescription().toLowerCase();
+            Task t = androidTask.get(i);
+            String title = t.getTitle().toLowerCase(), description = t.getDescription().toLowerCase();
             newText = newText.toLowerCase();
             if (title.contains(newText) || description.contains(newText))
-                temp.add(new AndroidTaskItem(t.getId(), t.getTaskTitle(), t.getDescription(), Task.convertDateTime(t.getDate(), t.getTime())));
+                temp.add(t);
         }
         taskAdapter = new AndroidTaskAdapter(this, temp);
         listView.setAdapter(taskAdapter);
@@ -175,7 +141,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        AndroidTaskItem androidTaskItem = androidTask.get(position);
+        Task androidTaskItem = androidTask.get(position);
         Intent intent = new Intent(this, EditorActivity.class);
         intent.putExtra("_id", androidTaskItem.getId());
         startActivity(intent);
@@ -184,9 +150,9 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        /*This function handle long press on task on the task list and delete it*/
+        /*This function will handle long press on task on the task list and delete it*/
         Context context = this;
-        AndroidTaskItem androidTaskItem = androidTask.get(position);
+        Task androidTaskItem = androidTask.get(position);
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
         myDialog.setTitle("Delete task");
         myDialog.setMessage("are you sure that you want to delete this task?");
@@ -205,10 +171,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(DialogInterface dialog, int which) {
             }
         });
-
         myDialog.show();
-
-
         return true;
     }
 }

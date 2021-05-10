@@ -23,8 +23,8 @@ public class DataBase {
         }
     }
 
-    public ArrayList<AndroidTaskItem> getTasks(String username) {
-        ArrayList<AndroidTaskItem> tasksList = new ArrayList<AndroidTaskItem>();
+    public ArrayList<Task> getTasks(String username) {
+        ArrayList<Task> tasksList = new ArrayList<>();
 
         String sql = "SELECT _id, title, description, datetime FROM todos WHERE todos.username = " + "'" + username + "'";
         Cursor cr = todosDB.rawQuery(sql, null);
@@ -36,7 +36,7 @@ public class DataBase {
 
         if (cr.moveToFirst()) {
             do {
-                tasksList.add(new AndroidTaskItem(cr.getInt(id), cr.getString(title), cr.getString(description), cr.getLong(dateTime)));
+                tasksList.add(new Task(cr.getInt(id), cr.getString(title), cr.getString(description), cr.getLong(dateTime)));
             }
             while (cr.moveToNext());
             cr.close();

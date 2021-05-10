@@ -1,7 +1,6 @@
 package com.danielr_shlomoc.ex3;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -11,12 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class AndroidTaskAdapter extends ArrayAdapter<AndroidTaskItem> {
+public class AndroidTaskAdapter extends ArrayAdapter<Task> {
 
 
-    public AndroidTaskAdapter(Activity context, ArrayList<AndroidTaskItem> androidTaskItem) {
+    public AndroidTaskAdapter(Activity context, ArrayList<Task> androidTaskItem) {
         super(context, 0, androidTaskItem);
     }
 
@@ -24,17 +22,16 @@ public class AndroidTaskAdapter extends ArrayAdapter<AndroidTaskItem> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         // Check if the existing view is being reused, otherwise inflate the view
-        if(convertView == null)
-        {
+        if (convertView == null) {
 
             convertView = View.inflate(getContext(), R.layout.list_item, null);
         }
 
-        AndroidTaskItem currentAndroidTask = getItem(position);
+        Task currentAndroidTask = getItem(position);
 
 
         TextView txvTaskTitle = convertView.findViewById(R.id.titleTxvID);
-        txvTaskTitle.setText(currentAndroidTask.getTaskTitle());
+        txvTaskTitle.setText(currentAndroidTask.getTitle());
 
 
         TextView date = convertView.findViewById(R.id.dateTxvID);
