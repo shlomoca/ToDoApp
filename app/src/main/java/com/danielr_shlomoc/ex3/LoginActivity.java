@@ -166,7 +166,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // add new user
         if (!userExist) {
-//            addUser(userName, userPassword);
             dataBase.addUser(userName, userPassword);
             login(true);
         }

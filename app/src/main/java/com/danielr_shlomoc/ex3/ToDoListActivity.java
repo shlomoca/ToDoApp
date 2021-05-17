@@ -28,6 +28,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     private SharedPreferences sp;
     private String username;
     private ArrayList<Task> androidTask;
+    private ArrayList<Task> androidCurrentTask;
     private ListView listView;
     private AndroidTaskAdapter taskAdapter;
 
@@ -63,6 +64,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     private void getUserTasks() {
         // Create an ArrayList of AndroidTaskItem objects
         androidTask = dataBase.getTasks(username);
+        androidCurrentTask = dataBase.getTasks(username);
 
         // Create an taskAdapter, whose data source is a list of AndroidFlavors.
         // The adapter knows how to create list item views for each item in the list.
@@ -133,6 +135,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
             if (title.contains(newText) || description.contains(newText))
                 temp.add(t);
         }
+        androidCurrentTask = temp;
         taskAdapter = new AndroidTaskAdapter(this, temp);
         listView.setAdapter(taskAdapter);
         return true;
@@ -141,7 +144,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Task androidTaskItem = androidTask.get(position);
+        Task androidTaskItem = androidCurrentTask.get(position);
         Intent intent = new Intent(this, EditorActivity.class);
         intent.putExtra("_id", androidTaskItem.getId());
         startActivity(intent);
@@ -152,7 +155,7 @@ public class ToDoListActivity extends AppCompatActivity implements View.OnClickL
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         /*This function will handle long press on task on the task list and delete it*/
         Context context = this;
-        Task androidTaskItem = androidTask.get(position);
+        Task androidTaskItem = androidCurrentTask.get(position);
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
         myDialog.setTitle("Delete task");
         myDialog.setMessage("are you sure that you want to delete this task?");

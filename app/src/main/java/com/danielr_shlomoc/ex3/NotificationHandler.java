@@ -56,8 +56,8 @@ public class NotificationHandler {
                         .setContentTitle(task.getTitle())
                         .setContentText(task.getDescription())
                         .setPriority(NotificationCompat.PRIORITY_HIGH) // make notification show
-                        .setContentIntent(openLogin) // set open app in login activity
-                        .setAutoCancel(true) // set remove after click
+//                        .setContentIntent(openLogin) // set open app in login activity
+//                        .setAutoCancel(true) // set remove after click
                         .build();
                 notificationManager.notify(task.getId(), notification);
             }
